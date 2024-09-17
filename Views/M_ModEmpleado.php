@@ -50,7 +50,7 @@
 </main>
 
 <footer>
-    <p>© 2024 Empresa XYZ. Todos los derechos reservados.</p>
+    <p>© 2024 TConsulting. Todos los derechos reservados.</p>
 </footer>
 
 </body>

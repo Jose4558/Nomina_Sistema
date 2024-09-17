@@ -17,7 +17,11 @@
         <tr>
             <th>Nombre</th>
             <th>Apellido</th>
+            <th>Fecha de Nacimiento</th>
+            <th>Fecha de Contratación</th>>
             <th>Salario Base</th>
+            <th>ID del Departamento</th>
+            <th>Foto</th>
         </tr>
         </thead>
         <tbody>
@@ -26,7 +30,11 @@
             echo "<tr>";
             echo "<td>" . $Empleado['Nombre'] . "</td>";
             echo "<td>" . $Empleado['Apellido'] . "</td>";
+            echo "<td>" . $Empleado['Fecha_Nac'] . "</td>";
+            echo "<td>" . $Empleado['Fecha_Contra']. "</td>";
             echo "<td>" . $Empleado['Salario_Base'] . "</td>";
+            echo "<td>" . $Empleado['Depto_ID'] . "</td>";
+            echo "<td>" . $Empleado['Foto'] . "</td>";
             echo "</tr>";
         }
         ?>
@@ -40,7 +48,7 @@
 </main>
 
 <footer>
-    <p>© 2024 Empresa XYZ. Todos los derechos reservados.</p>
+    <p>© 2024 TConsulting. Todos los derechos reservados.</p>
 </footer>
 
 </body>

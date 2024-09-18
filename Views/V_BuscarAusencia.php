@@ -12,7 +12,7 @@
 </header>
 
 <main>
-    <form action="C_BuscarAusencia.php" method="POST">
+    <form action="/Nomina_Sistemas/Controller/C_BuscarAusencia.php" method="POST">
         <div>
             <label for="ID_Empleado">ID del Empleado:</label>
             <input type="number" id="ID_Empleado" name="ID_Empleado" required>

@@ -35,7 +35,7 @@ nav li {
 
 nav a {
     display: block;
-    color: #ec0808;
+    color: white;
     padding: 14px 20px;
     text-decoration: none;
 }
@@ -81,24 +81,23 @@ table tbody tr:hover {
 }
 
 .btn {
-    padding: 10px 20px;
-    font-size: 1em;
-    border-radius: 5px;
     text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
     margin-right: 5px;
+    display: inline-block;
 }
-.btn-primary {
-    background-color: #007bff;
+
+.btn-editar {
+    background-color: #27ae60;
     color: white;
 }
 
-.btn-danger {
-    background-color: #dc3545;
+.btn-eliminar {
+    background-color: #e74c3c;
     color: white;
 }
-.btn:hover {
-    opacity: 0.8;
-}
+
 .btn-agregar {
     background-color: #2980b9;
     color: white;

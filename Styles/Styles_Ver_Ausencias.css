@@ -35,7 +35,7 @@ nav li {
 
 nav a {
     display: block;
-    color: #ec0808;
+    color: #fafcfd;
     padding: 14px 20px;
     text-decoration: none;
 }
@@ -87,12 +87,12 @@ table tbody tr:hover {
     text-decoration: none;
     margin-right: 5px;
 }
-.btn-primary {
+.btn-editar {
     background-color: #007bff;
     color: white;
 }
 
-.btn-danger {
+.btn-eliminar {
     background-color: #dc3545;
     color: white;
 }

@@ -1,4 +1,5 @@
 <?php
+
 require '../Model/Conexion.php'; // Conexión a la base de datos
 
 // Verificar si se ha proporcionado el ID de la solicitud
@@ -23,8 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['modificar'])) {
     $Descuento = isset($_POST['Descuento']) ? $_POST['Descuento'] : null;
     $ID_Empleado = $_POST['ID_Empleado'];
 
+    $conexion = new Conexion();
     // Actualizar los datos de la ausencia
     $resultado = $conexion->modificarAusencia($ID_Solicitud, $FechaSolicitud, $Fecha_Inicio, $Fecha_Fin, $Motivo, $Descripcion, $Estado, $Cuenta_Salario, $Descuento, $ID_Empleado);
+
 
     if ($resultado) {
         echo "Ausencia modificada exitosamente.";

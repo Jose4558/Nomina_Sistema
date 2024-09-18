@@ -171,21 +171,25 @@ class Conexion
             $query = "EXEC MostrarAusenciasPorEmpleado @ID_Empleado = :ID_Empleado";
             $stmt = $this->con->prepare($query);
             $stmt->bindParam(':ID_Empleado', $ID_Empleado, PDO::PARAM_INT);
+            $stmt->execute();
 
-            if ($stmt->execute()) {
-                $ausencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                if (!empty($ausencias)) {
-                    // Obtener la ausencia más reciente
-                    return $ausencias[count($ausencias) - 1]; // La última ausencia en el array es la más reciente
-                }
+            $ausencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (count($ausencias) > 0) {
+                // Ordenar por FechaSolicitud y devolver la más reciente
+                usort($ausencias, function ($a, $b) {
+                    return strtotime($b['FechaSolicitud']) - strtotime($a['FechaSolicitud']);
+                });
+                return $ausencias[0]; // Devolver la ausencia más reciente
             } else {
-                echo "Error en la consulta: " . implode(" ", $stmt->errorInfo());
+                return null;
             }
         } catch (PDOException $e) {
-            echo "Excepción capturada: " . $e->getMessage();
+            echo "Error al buscar la ausencia: " . $e->getMessage();
+            return null;
         }
-        return null; // Si no se encuentra ninguna ausencia o si ocurre un error
     }
+
 
     public function modificarAusencia($ID_Solicitud, $FechaSolicitud, $Fecha_Inicio, $Fecha_Fin, $Motivo, $Descripcion, $Estado, $Cuenta_Salario, $Descuento, $ID_Empleado) {
         try {
@@ -217,6 +221,33 @@ class Conexion
             return false;
         }
     }
+
+    public function getAusencias() {
+        $query = "SELECT * FROM Ausencias"; // Ajusta la consulta según tu estructura de base de datos
+        $stmt = $this->con->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Función para borrar una ausencia
+    public function borrarAusencia($id_solicitud) {
+        try {
+            // Prepara la llamada al procedimiento almacenado
+            $stmt = $this->con->prepare("EXEC BorrarAusencia :ID_Solicitud");
+            $stmt->bindParam(':ID_Solicitud', $id_solicitud, PDO::PARAM_INT);
+
+            // Ejecuta el procedimiento almacenado
+            $stmt->execute();
+
+            // Verifica si se borró alguna fila
+            return $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            // Maneja errores
+            echo "Error al borrar la ausencia: " . $e->getMessage();
+            return false;
+        }
+    }
+
 
 }
 

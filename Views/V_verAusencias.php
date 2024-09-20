@@ -48,7 +48,7 @@
                         <td><?php echo htmlspecialchars($ausencia['Descuento']); ?></td>
                         <td><?php echo htmlspecialchars($ausencia['ID_Empleado']); ?></td>
                         <td>
-                            <a href="C_ModAusencia.php?id=<?php echo $ausencia['ID_Solicitud']; ?>" class="btn btn-editar">Editar</a>
+                            <a href="C_ActualizarAusencia.php?id=<?php echo $ausencia['ID_Solicitud']; ?>" class="btn btn-editar">Editar</a>
                             <a href="C_BorrarAusencia.php?id=<?php echo $ausencia['ID_Solicitud']; ?>" class="btn btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar esta ausencia?');">Eliminar</a>
                         </td>
                     </tr>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+global$Empleados; <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +19,7 @@
 </header>
 
 <main>
-    <section class="empleados">
+    <section class="Empleados">
         <h2>Empleados Registrados</h2>
         <table>
             <thead>
@@ -45,9 +45,19 @@
                     <td><?php echo htmlspecialchars($Empleado['Depto_ID']); ?></td>
                     <td><img src="<?php echo htmlspecialchars($Empleado['Foto']); ?>" alt="Foto del Empleado" width="50"></td>
                     <td>
-                        <a href="../Controller/C_ModEmpleado.php?id=<?php echo htmlspecialchars($Empleado['ID_Empleado']); ?>" class="btn btn-primary">Editar</a>
-                        <a href="../Controller/C_BorrarEmpleado.php?id=<?php echo htmlspecialchars($Empleado['ID_Empleado']); ?>" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este empleado?');">Eliminar</a>
+                        <!-- Formulario para editar el empleado usando POST -->
+                        <form action="../Controller/C_ModEmpleado.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="ID_Empleado" value="<?php echo htmlspecialchars($Empleado['ID_Empleado']); ?>">
+                            <button type="submit" class="btn btn-primary">Editar</button>
+                        </form>
+
+                        <!-- Formulario para eliminar el empleado usando POST -->
+                        <form action="../Controller/C_BorrarEmpleado.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="ID_Empleado" value="<?php echo htmlspecialchars($Empleado['ID_Empleado']); ?>">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Estás seguro de eliminar este empleado?');">Eliminar</button>
+                        </form>
                     </td>
+
                 </tr>
             <?php endforeach; ?>
             </tbody>
@@ -61,3 +71,4 @@
 </footer>
 </body>
 </html>
+

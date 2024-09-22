@@ -45,7 +45,9 @@ nav a:hover, .active {
 }
 
 main {
-    padding: 20px;
+    padding: 2rem;
+    max-width: 80%;
+    margin: 0 auto;
 }
 
 h2 {
@@ -81,11 +83,13 @@ table tbody tr:hover {
 }
 
 .btn {
+    border: none;
     text-decoration: none;
     padding: 8px 12px;
     border-radius: 4px;
     margin-right: 5px;
     display: inline-block;
+    cursor: pointer;
 }
 
 .btn-editar {
@@ -105,6 +109,63 @@ table tbody tr:hover {
 
 .btn:hover {
     opacity: 0.9;
+}
+
+.form-section {
+    margin-top: 2rem;
+}
+
+.form-crear-editar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+    width: 48%; /* Los campos ocupan menos de la mitad del ancho */
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-group input, select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* En pantallas pequeñas los campos ocupan el 100% */
+@media (max-width: 768px) {
+    .form-group {
+        width: 100%;
+    }
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+
+
+.btn-submit {
+    background-color: #113069;
+    color: white;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-submit:hover {
+    background-color: #122b5a;
 }
 
 footer {

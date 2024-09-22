@@ -21,7 +21,7 @@ $usuarios = $usuarioDB->getAll();
         <h1>Gestión de Usuarios</h1>
         <nav>
             <ul>
-                <li><a href="index.php">Regresar</a></li>
+                <li><a href="index.php">Inicio</a></li>
                 <li><a href="#" class="active">Usuarios</a></li>
                 <li><a href="usuarios.php">Nuevo</a></li>
                 <li><a href="roles.php">Roles</a></li>
@@ -56,7 +56,6 @@ $usuarios = $usuarioDB->getAll();
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <p><a href="agregar_usuario.php" class="btn btn-agregar">+ Agregar Nuevo Usuario</a></p>
         </section>
     </main>
     <footer>

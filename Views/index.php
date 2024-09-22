@@ -1,18 +1,66 @@
-<?php
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio - T Consulting</title>
+    <link rel="stylesheet" href="../Styles/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
 
-echo realpath('../Controller/C_verEmpleado.php'); // Esto te dará la ruta absoluta que PHP está tratando de abrir
-require '../Controller/C_verEmpleado.php';
+<header>
+    <h1>Bienvenido a T Consulting S.A</h1>
+</header>
 
-echo realpath('../Controller/C_ModEmpleado.php'); // Esto te dará la ruta absoluta que PHP está tratando de abrir
-require '../Controller/C_ModEmpleado.php';
+<nav>
+    <ul>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="#">Evaluaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="#">Cuentas por Cobrar</a></li>
+                <li><a href="#">Cuentas por Pagar</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 
-echo realpath('../Controller/C_CrearEmpleado.php'); // Esto te dará la ruta absoluta que PHP está tratando de abrir
-require '../Controller/C_CrearEmpleado.php';
+<main>
+    <h2>Políticas de la Empresa</h2>
+    <p>
+        En esta sección se detallan las políticas y normativas de [Nombre de la Empresa]. Nuestro objetivo es
+        garantizar que cada empleado y área de la empresa cuente con un entorno estructurado y alineado a las mejores
+        prácticas. Aquí encontrarás información sobre procedimientos, códigos de conducta, y mucho más.
+    </p>
+</main>
 
-echo realpath('../Controller/C_BuscarAusencia.php'); // Esto te dará la ruta absoluta que PHP está tratando de abrir
-require '../Controller/C_BuscarAusencia.php';
+<footer>
+    <p>&copy; 2024 T Consulting S.A. Todos los derechos reservados.</p>
+</footer>
 
-echo realpath('../Controller/C_AusenciaAutorizacion.php'); // Esto te dará la ruta absoluta que PHP está tratando de abrir
-require '../Controller/C_AusenciaAutorizacion.php';
-
-?>
+</body>
+</html>

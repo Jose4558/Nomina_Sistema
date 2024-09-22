@@ -7,7 +7,7 @@ class Conexion
     public function __construct()
     {
         try {
-            $this->con = new PDO('sqlsrv:server=DESKTOP-D5H41I4;database=TConsulting', null, null, [
+            $this->con = new PDO('sqlsrv:server=JSUHULA\UMGDB2;database=TConsulting', null, null, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::SQLSRV_ATTR_DIRECT_QUERY => true,
                 PDO::SQLSRV_ATTR_FETCHES_NUMERIC_TYPE => true,

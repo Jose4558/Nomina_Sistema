@@ -11,9 +11,9 @@
     <nav>
         <ul>
             <li><a href="index.php">Regresar</a></li>
-            <li><a href="V_ListarFamiliares.php" class="active">Familiares</a></li>
-            <li><a href="V_CrearFamiliar.php">Nuevo</a></li>
-            <li><a href="empleados.php">Empleados</a></li>
+            <li><a href="V_VerFamiliar.php" class="active">Familiares</a></li>
+            <li><a href="C_CrearFamiliar.php">Nuevo</a></li>
+            <li><a href="C_verEmpleado.php">Empleados</a></li>
         </ul>
     </nav>
 </header>

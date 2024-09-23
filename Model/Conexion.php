@@ -22,7 +22,7 @@ class Conexion
     public function getUser()
     {
         try {
-            $stmt = $this->con->prepare("EXEC Ver_Empleado");
+            $stmt = $this->con->prepare("EXEC MostrarEmpleados");
             $stmt->execute();
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -476,7 +476,67 @@ class Conexion
         return $stmt->fetch(PDO::FETCH_ASSOC); // Usamos fetch() para obtener un solo resultado
     }
 
+    public function mostrarHorasExtras() {
+        $stmt = $this->con->prepare("EXEC MostrarHorasExtras");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
+    public function agregarHorasExtras($fecha, $horaNormal, $horaDoble, $idEmpleado) {
+        $stmt = $this->con->prepare("EXEC AgregarHorasExtras :Fecha, :Hora_Normal, :Hora_Doble, :ID_Empleado");
+        $stmt->bindParam(':Fecha', $fecha);
+        $stmt->bindParam(':Hora_Normal', $horaNormal);
+        $stmt->bindParam(':Hora_Doble', $horaDoble);
+        $stmt->bindParam(':ID_Empleado', $idEmpleado);
+        $stmt->execute();
+    }
+
+    public function modificarHorasExtras($ID_HoraExtra, $Fecha, $Hora_Normal, $Hora_Doble, $ID_Empleado) {
+        try {
+            // Preparar la consulta para ejecutar el procedimiento almacenado
+            $stmt = $this->con->prepare("EXEC ModificarHoraExtra :ID_HoraExtra, :Fecha, :Hora_Normal, :Hora_Doble, :ID_Empleado");
+
+            // Asignar los parámetros
+            $stmt->bindParam(':ID_HoraExtra', $ID_HoraExtra, PDO::PARAM_INT);
+            $stmt->bindParam(':Fecha', $Fecha, PDO::PARAM_STR);
+            $stmt->bindParam(':Hora_Normal', $Hora_Normal, PDO::PARAM_STR);
+            $stmt->bindParam(':Hora_Doble', $Hora_Doble, PDO::PARAM_STR);
+            $stmt->bindParam(':ID_Empleado', $ID_Empleado, PDO::PARAM_INT);
+
+            // Ejecutar la consulta
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            echo "Error al modificar la hora extra: " . $e->getMessage();
+            return false;
+        }
+    }
+
+    public function eliminarHoraExtra($idHoraExtra) {
+        $stmt = $this->con->prepare("EXEC EliminarHoraExtra :ID_HoraExtra");
+        $stmt->bindParam(':ID_HoraExtra', $idHoraExtra);
+        $stmt->execute();
+    }
+
+    public function buscarHoraExtra($ID_HoraExtra) {
+        try {
+            // Preparar el procedimiento almacenado
+            $stmt = $this->con->prepare("EXEC BuscarHoraExtra :ID_HoraExtra");
+
+            // Asignar el parámetro
+            $stmt->bindParam(':ID_HoraExtra', $ID_HoraExtra, PDO::PARAM_INT);
+
+            // Ejecutar la consulta
+            $stmt->execute();
+
+            // Obtener el resultado
+            $horaExtra = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $horaExtra;
+        } catch (PDOException $e) {
+            echo "Error al buscar la hora extra: " . $e->getMessage();
+            return false;
+        }
+    }
 }
 
 ?>

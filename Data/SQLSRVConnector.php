@@ -1,32 +1,44 @@
 <?php
-class SQLSRVConnector {
+class SQLSRVConnector
+{
     private static $instance = null;
     private $connection;
 
-    private $host = 'JSUHULA\UMGDB2';
-    private $username = 'sqladmin';
-    private $password = '59548601Josias';
-    private $database = 'TConsulting';
-    private function __construct() {
+    // Configura correctamente los detalles de la conexión
+    private $host = 'DESKTOP-D5H41I4';  // Nombre del servidor
+    private $username = null;           // Cambia si usas autenticación SQL
+    private $password = null;           // Cambia si usas autenticación SQL
+    private $database = 'TConsulting';  // Nombre de la base de datos
+
+    private function __construct()
+    {
         try {
+            // Verifica que los datos de conexión sean válidos
             $dsn = "sqlsrv:Server={$this->host};Database={$this->database}";
             $this->connection = new PDO($dsn, $this->username, $this->password);
-            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+            // Configura el modo de errores para PDO
+            $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
+            // Muestra un mensaje de error si no se puede conectar
             die("Database Connection Failed: " . $e->getMessage());
         }
     }
 
-    public static function getInstance() {
+    // Singleton para obtener una sola instancia de la conexión
+    public static function getInstance()
+    {
         if (!self::$instance) {
             self::$instance = new SQLSRVConnector();
         }
         return self::$instance;
     }
 
-    public function getConnection() {
+    // Método para obtener la conexión activa
+    public function getConnection()
+    {
         return $this->connection;
     }
 }
+
 

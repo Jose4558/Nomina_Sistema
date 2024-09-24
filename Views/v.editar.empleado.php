@@ -1,51 +1,53 @@
 <?php
-require_once '../Model/Empleado.php';
 require_once '../Data/EmpleadoODB.php';
 require_once '../Data/DepartamentoODB.php';
 
 $empleadoODB = new EmpleadoODB();
 $departamentoODB = new DepartamentoODB();
-$departamentos = $departamentoODB->getAll();
 
-$idEmpleado = null;
-$empleado = null;
+$idEmpleado = $_GET['ID_Empleado'] ?? null;
 
-// Verificar si se ha enviado un ID_Empleado para editar
-if (isset($_GET['ID_Empleado'])) {
-    $idEmpleado = $_GET['ID_Empleado'];
-    $empleado = $empleadoODB->getById($idEmpleado); // Obtener los datos del empleado
+if ($idEmpleado) {
+    $empleado = $empleadoODB->getById($idEmpleado);
+    $departamentos = $departamentoODB->getAll();
 }
 
-// Verificar si se ha enviado el formulario de actualización
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ID_Empleado'])) {
-    $idEmpleado = $_POST['ID_Empleado']; // ID oculto para mantener el empleado
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $idEmpleado = $_POST['ID_Empleado'];
     $nombre = $_POST['Nombre'];
     $apellido = $_POST['Apellido'];
-    $fechaNac = $_POST['Fecha_Nac'];
-    $fechaContra = $_POST['Fecha_Contra'];
+    $fechaNacimiento = $_POST['Fecha_Nac'];
+    $fechaContratacion = $_POST['Fecha_Contra'];
     $salarioBase = $_POST['Salario_Base'];
-    $deptoID = $_POST['Depto_ID'];
+    $deptoId = $_POST['Depto_ID'];
+    $foto = !empty($_FILES['Foto']['tmp_name']) ? file_get_contents($_FILES['Foto']['tmp_name']) : null;
 
-    if (isset($_FILES['Foto']) && $_FILES['Foto']['error'] === UPLOAD_ERR_OK) {
-        // Procesar la foto (mover el archivo y almacenar la ruta)
-        $foto = $_FILES['Foto']['name'];
-        move_uploaded_file($_FILES['Foto']['tmp_name'], "../uploads/" . $foto);
+    $result = $empleadoODB->update($idEmpleado, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $deptoId, $foto);
+
+    if ($result) {
+        echo "<script>
+            Swal.fire({
+                title: 'Éxito',
+                text: 'El empleado ha sido modificado correctamente.',
+                icon: 'success'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'v.empleados.php';
+                }
+            });
+        </script>";
     } else {
-        // Si no se ha subido una nueva foto, mantener la existente
-        $foto = isset($empleado) ? $empleado->getFoto() : null;
+        echo "<script>
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un problema al modificar el empleado.',
+                icon: 'error'
+            });
+        </script>";
     }
-
-    // Crear un nuevo objeto Empleado con los datos actualizados
-    $empleadoActualizado = new Empleado($idEmpleado, $nombre, $apellido, $fechaNac, $fechaContra, $salarioBase, new Departamento($deptoID, ''), $foto);
-
-    // Llamar al método update del objeto de acceso a datos
-    $empleadoODB->update($empleadoActualizado);
-
-    // Redirigir al listado de empleados con confirmación de actualización
-    header('Location: v.empleados.php?action=updated');
-    exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -71,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ID_Empleado'])) {
 <main>
     <section class="form-section">
         <h2>Modificar Empleado</h2>
-        <form id="empleadoForm" action="v.editar.empleado.php?ID_Empleado=<?php echo $idEmpleado; ?>" method="POST" enctype="multipart/form-data" class="form-crear-editar">
+        <form id="empleadoForm" action="v.editar.empleado.php?ID_Empleado=<?php echo htmlspecialchars($idEmpleado); ?>" method="POST" enctype="multipart/form-data" class="form-crear-editar">
             <!-- Campo oculto para ID_Empleado -->
             <input type="hidden" name="ID_Empleado" value="<?php echo htmlspecialchars($idEmpleado); ?>">
 
@@ -100,9 +102,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ID_Empleado'])) {
                 <select id="depto_id" name="Depto_ID" required>
                     <option value="">Seleccionar...</option>
                     <?php foreach ($departamentos as $departamento) : ?>
-                        <option value="<?php echo $departamento->getIdDepartamento(); ?>"
+                        <option value="<?php echo htmlspecialchars($departamento->getIdDepartamento()); ?>"
                             <?php echo $empleado->getDepartamento()->getIdDepartamento() === $departamento->getIdDepartamento() ? 'selected' : ''; ?>>
-                            <?php echo $departamento->getNombre(); ?>
+                            <?php echo htmlspecialchars($departamento->getNombre()); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
@@ -112,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ID_Empleado'])) {
                 <input type="file" id="foto" name="Foto">
                 <!-- Mostrar imagen existente -->
                 <?php if ($empleado->getFoto()) : ?>
-                    <img src="../uploads/<?php echo $empleado->getFoto(); ?>" alt="Foto del Empleado" width="100">
+                    <img src="../uploads/<?php echo htmlspecialchars($empleado->getFoto()); ?>" alt="Foto del Empleado" width="100">
                 <?php endif; ?>
             </div>
             <div class="form-group form-buttons">
@@ -123,8 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ID_Empleado'])) {
 </main>
 
 <footer>
-    <p>&copy; 2024 TConsulting. Todos los derechos reservados.</p>
+    <p>© 2024 TConsulting. Todos los derechos reservados.</p>
 </footer>
-
 </body>
 </html>
+
+

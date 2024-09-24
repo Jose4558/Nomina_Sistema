@@ -8,10 +8,10 @@ $empleadoODB = new EmpleadoODB();
 // Verificar si se ha enviado un ID_Empleado para eliminar
 if (isset($_GET['ID_Empleado'])) {
     $idEmpleado = $_GET['ID_Empleado'];
-    
+
     // Llamar al método para eliminar el empleado en el objeto de acceso a datos
     $empleadoODB->delete($idEmpleado);
-    
+
     // Redirigir con un parámetro de éxito
     header('Location: ' . $_SERVER['PHP_SELF'] . '?action=deleted');
     exit();

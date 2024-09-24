@@ -4,42 +4,55 @@ require_once '../Data/EmpleadoODB.php';
 require_once '../Data/DepartamentoODB.php';
 
 $empleadoODB = new EmpleadoODB();
-
 $departamentoODB = new DepartamentoODB();
 $departamentos = $departamentoODB->getAll();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Verifica si los datos están presentes en $_POST
-    $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : null;
-    $apellido = isset($_POST['apellido']) ? $_POST['apellido'] : null;
-    $fechaNacimiento = isset($_POST['fecha_nacimiento']) ? $_POST['fecha_nacimiento'] : null;
-    $fechaContratacion = isset($_POST['fecha_contratacion']) ? $_POST['fecha_contratacion'] : null;
-    $salarioBase = isset($_POST['salario_base']) ? $_POST['salario_base'] : null;
-    $departamentoID = isset($_POST['departamento_id']) ? $_POST['departamento_id'] : null;
-    $foto = !empty($_FILES['foto']['tmp_name']) ? file_get_contents($_FILES['foto']['tmp_name']) : null;
+    $nombre = isset($_POST['Nombre']) ? $_POST['Nombre'] : null;
+    $apellido = isset($_POST['Apellido']) ? $_POST['Apellido'] : null;
+    $fechaNacimiento = isset($_POST['Fecha_Nac']) ? $_POST['Fecha_Nac'] : null;
+    $fechaContratacion = isset($_POST['Fecha_Contra']) ? $_POST['Fecha_Contra'] : null;
+    $salarioBase = isset($_POST['Salario_Base']) ? $_POST['Salario_Base'] : null;
+    $departamentoID = isset($_POST['Depto_ID']) ? $_POST['Depto_ID'] : null;
+    $foto = !empty($_FILES['Foto']['tmp_name']) ? file_get_contents($_FILES['Foto']['tmp_name']) : null;
 
-    // Solo continuar si todos los campos requeridos están presentes
     if ($nombre && $apellido && $fechaNacimiento && $fechaContratacion && $salarioBase && $departamentoID) {
-        // Crear el objeto Departamento y Empleado
         $departamento = new Departamento($departamentoID, "Nombre del departamento");
         $empleado = new Empleado(null, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $departamento, $foto, 1);
 
-        // Insertar el empleado
-        $empleadoODB = new EmpleadoODB();
         if ($empleadoODB->insert($empleado)) {
-            echo "Empleado insertado correctamente.";
+            echo "<script>
+                Swal.fire({
+                    title: 'Éxito',
+                    text: 'Empleado insertado correctamente.',
+                    icon: 'success'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = 'v.empleados.php?action=created';
+                    }
+                });
+            </script>";
         } else {
-            echo "Error al insertar el empleado.";
+            echo "<script>
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Error al insertar el empleado.',
+                    icon: 'error'
+                });
+            </script>";
         }
     } else {
-        echo "Por favor, completa todos los campos requeridos.";
+        echo "<script>
+            Swal.fire({
+                title: 'Advertencia',
+                text: 'Por favor, completa todos los campos requeridos.',
+                icon: 'warning'
+            });
+        </script>";
     }
-    // Redirigir al listado de empleados con confirmación de creación
-    header('Location: v.empleados.php?action=created');
-    exit();
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">

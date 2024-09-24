@@ -58,7 +58,7 @@ class Empleado {
         return $this->foto;
     }
 
-    public function getActivo() {
+    public function getactivo() {
         return $this->activo;
     }
 

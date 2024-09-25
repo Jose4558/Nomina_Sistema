@@ -4,21 +4,31 @@ require_once '../Model/Ausencia.php';
 require_once '../Data/AusenciaODB.php';
 
 $ausenciaODB = new AusenciaODB();
+$message = '';
 
 // Verificar si se ha enviado un ID_Solicitud para eliminar
 if (isset($_GET['ID_Solicitud'])) {
     $idSolicitud = $_GET['ID_Solicitud'];
 
-    // Llamar al método para eliminar la ausencia en el objeto de acceso a datos
-    $ausenciaODB->delete($idSolicitud);
-
-    // Redirigir con un parámetro de éxito
-    header('Location: ' . $_SERVER['PHP_SELF'] . '?action=deleted');
-    exit();
+    // Verificar si el ID_Solicitud es válido
+    if (is_numeric($idSolicitud)) {
+        // Llamar al método para eliminar la ausencia en el objeto de acceso a datos
+        $ausenciaODB->delete($idSolicitud);
+        // Redirigir con un parámetro de éxito
+        header('Location: ' . $_SERVER['PHP_SELF'] . '?action=deleted');
+        exit();
+    } else {
+        $message = 'ID de solicitud inválido.';
+    }
 }
 
 // Obtener todas las ausencias para mostrar en la tabla
 $ausencias = $ausenciaODB->getAll();
+
+// Manejo de mensajes de éxito
+if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
+    $message = 'La ausencia fue eliminada correctamente.';
+}
 
 ?>
 
@@ -48,13 +58,21 @@ $ausencias = $ausenciaODB->getAll();
 <main>
     <section class="Ausencias">
         <h2>Ausencias Registradas</h2>
+
+        <!-- Mostrar mensaje de éxito -->
+        <?php if ($message): ?>
+            <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
+        <?php endif; ?>
+
         <table>
             <thead>
             <tr>
                 <th>ID Solicitud</th>
+                <th>Fecha Solicitud</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
                 <th>Motivo</th>
+                <th>Descripción</th>
                 <th>Estado</th>
                 <th>Cuenta Salario</th>
                 <th>Descuento</th>
@@ -66,16 +84,20 @@ $ausencias = $ausenciaODB->getAll();
             <?php foreach ($ausencias as $ausencia) : ?>
                 <tr>
                     <td><?php echo htmlspecialchars($ausencia->getIdSolicitud()); ?></td>
+                    <td><?php echo htmlspecialchars($ausencia->getFechaSolicitud()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getFechaInicio()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getFechaFin()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getMotivo()); ?></td>
+                    <td><?php echo htmlspecialchars($ausencia->getDescripcion()); ?></td> <!-- Mostrar descripción -->
                     <td><?php echo htmlspecialchars($ausencia->getEstado()); ?></td>
-                    <td><?php echo htmlspecialchars($ausencia->getCuentaSalario()); ?></td>
+                    <td><?php echo htmlspecialchars($ausencia->getCuentaSalario() ? 'Sí' : 'No'); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getDescuento()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getIdEmpleado()); ?></td>
                     <td>
-                        <a href="v.editar.ausencia.empleado.php?ID_Solicitud=<?php echo $ausencia->getIdSolicitud(); ?>" class="btn btn-editar">Editar</a>
-                        <button class="btn btn-eliminar" data-id="<?php echo $ausencia->getIdSolicitud(); ?>">Eliminar</button>
+                        <div class="botones-acciones">
+                            <a href="v.editar.ausencia.empleado.php?ID_Solicitud=<?php echo $ausencia->getIdSolicitud(); ?>" class="btn btn-editar">Editar</a>
+                            <button class="btn btn-eliminar" data-id="<?php echo $ausencia->getIdSolicitud(); ?>">Eliminar</button>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>

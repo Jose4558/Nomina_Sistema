@@ -82,6 +82,11 @@ table tbody tr:hover {
     background-color: #dcdde1;
 }
 
+.botones-acciones {
+    display: flex; /* Aplica flexbox para alinear los botones */
+    gap: 10px; /* Espacio entre los botones, ajusta según tu preferencia */
+}
+
 .btn {
     border: none;
     text-decoration: none;

@@ -5,7 +5,7 @@ require_once '../Data/EmpleadoODB.php';
 $ausenciaODB = new AusenciaODB();
 $empleadoODB = new EmpleadoODB();
 
-$idAusencia = $_GET['ID_Ausencia'] ?? null;
+$idAusencia = $_GET['ID_Solicitud'] ?? null;
 
 if ($idAusencia) {
     $ausencia = $ausenciaODB->getById($idAusencia);
@@ -15,13 +15,16 @@ if ($idAusencia) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idAusencia = $_POST['ID_Ausencia'];
     $idEmpleado = $_POST['ID_Empleado'];
+    $fechaSolicitud = $_POST['FechaSolicitud'];  // Capturamos la fecha de solicitud
     $fechaInicio = $_POST['Fecha_Inicio'];
     $fechaFin = $_POST['Fecha_Fin'];
     $motivo = $_POST['Motivo'];
-    $estado = $_POST['Estado'];
-    $descuento = $_POST['Descuento'];
+    $descripcion = $_POST['Descripcion'];
+    $estado = empty($_POST['Estado']) ? null : $_POST['Estado'];
+    $cuentaSalario = isset($_POST['Cuenta_Salario']) ? 1 : null;
+    $descuento = empty($_POST['Descuento']) ? null : $_POST['Descuento'];
 
-    $result = $ausenciaODB->update($idAusencia, $idEmpleado, $fechaInicio, $fechaFin, $motivo, $estado, $descuento);
+    $result = $ausenciaODB->update($idAusencia, $idEmpleado, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento);
 
     if ($result) {
         echo "<script>
@@ -31,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 icon: 'success'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = 'v.ausencias.php';
+                    window.location.href = 'v.empleados.php';
                 }
             });
         </script>";
@@ -70,50 +73,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <main>
     <section class="form-section">
-        <h2>Modificar Ausencia</h2>
-        <form id="ausenciaForm" action="v.editar.ausencia.empleado.php?ID_Ausencia=<?php echo htmlspecialchars($idAusencia); ?>" method="POST" class="form-crear-editar">
-            <!-- Campo oculto para ID_Ausencia -->
-            <input type="hidden" name="ID_Ausencia" value="<?php echo htmlspecialchars($idAusencia); ?>">
+        <form id="ausenciaForm" action="v.editar.ausencia.empleado.php?ID_Solicitud=<?php echo htmlspecialchars($idAusencia); ?>" method="POST" class="form-crear-editar">
+        <input type="hidden" name="ID_Ausencia" value="<?php echo htmlspecialchars($idAusencia); ?>">
+            <input type="hidden" name="ID_Empleado" value="<?php echo htmlspecialchars($ausencia->getIdEmpleado()); ?>"> <!-- Campo oculto para ID_Empleado -->
+            <input type="hidden" name="FechaSolicitud" value="<?php echo htmlspecialchars($ausencia->getFechaSolicitud()); ?>">
+
 
             <div class="form-group">
-                <label for="ID_Empleado">Empleado:</label>
-                <select id="id_empleado" name="ID_Empleado" required>
-                    <option value="">Seleccionar...</option>
-                    <?php foreach ($empleados as $empleado) : ?>
-                        <option value="<?php echo htmlspecialchars($empleado->getIdEmpleado()); ?>"
-                            <?php echo $ausencia->getIdEmpleado() === $empleado->getIdEmpleado() ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($empleado->getNombre() . ' ' . $empleado->getApellido()); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <label for="Empleado">Empleado:</label>
+                <input type="text" id="empleado" value="<?php echo htmlspecialchars($empleadoODB->getById($ausencia->getIdEmpleado())->getNombre() . ' ' . $empleadoODB->getById($ausencia->getIdEmpleado())->getApellido()); ?>" disabled> <!-- Mostrar nombre sin modificar -->
             </div>
 
             <div class="form-group">
                 <label for="Fecha_Inicio">Fecha de Inicio:</label>
                 <input type="date" id="fecha_inicio" name="Fecha_Inicio" value="<?php echo htmlspecialchars($ausencia->getFechaInicio()); ?>" required>
             </div>
+
             <div class="form-group">
                 <label for="Fecha_Fin">Fecha de Fin:</label>
                 <input type="date" id="fecha_fin" name="Fecha_Fin" value="<?php echo htmlspecialchars($ausencia->getFechaFin()); ?>" required>
             </div>
+
             <div class="form-group">
                 <label for="Motivo">Motivo:</label>
                 <input type="text" id="motivo" name="Motivo" value="<?php echo htmlspecialchars($ausencia->getMotivo()); ?>" required>
             </div>
+
+            <div class="form-group">
+                <label for="Descripcion">Descripción:</label>
+                <textarea id="descripcion" name="Descripcion" rows="4" cols="50"><?php echo htmlspecialchars($ausencia->getDescripcion()); ?></textarea>
+            </div>
+
             <div class="form-group">
                 <label for="Estado">Estado:</label>
-                <select id="estado" name="Estado" required>
+                <select id="estado" name="Estado">
+                    <option value="">Seleccionar...</option> <!-- Opción vacía -->
                     <option value="Aprobado" <?php echo $ausencia->getEstado() === 'Aprobado' ? 'selected' : ''; ?>>Aprobado</option>
                     <option value="Pendiente" <?php echo $ausencia->getEstado() === 'Pendiente' ? 'selected' : ''; ?>>Pendiente</option>
                     <option value="Rechazado" <?php echo $ausencia->getEstado() === 'Rechazado' ? 'selected' : ''; ?>>Rechazado</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="Cuenta_Salario">Cuenta Salario:</label>
+                <input type="checkbox" id="cuenta_salario" name="Cuenta_Salario" value="1" <?php echo $ausencia->getCuentaSalario() ? 'checked' : ''; ?>>
+                <!-- Si el checkbox no está marcado, no enviará ningún valor -->
+            </div>
+
             <div class="form-group">
                 <label for="Descuento">Descuento:</label>
-                <input type="number" id="descuento" name="Descuento" value="<?php echo htmlspecialchars($ausencia->getDescuento()); ?>" required>
+                <input type="number" id="descuento" name="Descuento" value="<?php echo htmlspecialchars($ausencia->getDescuento()); ?>" step="0.01" placeholder="Opcional">
             </div>
+
             <div class="form-group form-buttons">
-                <button type="submit" class="btn-submit">Actualizar Registro</button>
+                <button type="submit" class="btn-submit">Guardar Cambios</button>
             </div>
         </form>
     </section>
@@ -124,3 +137,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </footer>
 </body>
 </html>
+
+

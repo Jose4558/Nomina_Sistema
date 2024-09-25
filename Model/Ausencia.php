@@ -2,29 +2,38 @@
 
 class Ausencia {
     private $idSolicitud;
+    private $fechaSolicitud;
     private $fechaInicio;
     private $fechaFin;
     private $motivo;
     private $estado;
     private $cuentaSalario;
     private $descuento;
-    private $idEmpleado; // ID del empleado asociado a la ausencia
+    private $idEmpleado;
+    private $descripcion;
 
-    public function __construct($idSolicitud = null, $fechaInicio, $fechaFin, $motivo, $estado, $cuentaSalario, $descuento, $idEmpleado) {
-        $this->idSolicitud = $idSolicitud; // Puede ser null
+    // Constructor con los 10 parámetros
+    public function __construct($idSolicitud, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento, $idEmpleado) {
+        $this->idSolicitud = $idSolicitud;
+        $this->fechaSolicitud = $fechaSolicitud;
         $this->fechaInicio = $fechaInicio;
         $this->fechaFin = $fechaFin;
         $this->motivo = $motivo;
+        $this->descripcion = $descripcion;
         $this->estado = $estado;
         $this->cuentaSalario = $cuentaSalario;
         $this->descuento = $descuento;
-        $this->idEmpleado = $idEmpleado; // ID del empleado que hizo la solicitud
+        $this->idEmpleado = $idEmpleado;
     }
 
-    // Getters y Setters
+    // Métodos getter y setter para todos los atributos
 
     public function getIdSolicitud() {
         return $this->idSolicitud;
+    }
+
+    public function getFechaSolicitud() {
+        return $this->fechaSolicitud;
     }
 
     public function getFechaInicio() {
@@ -55,8 +64,16 @@ class Ausencia {
         return $this->idEmpleado;
     }
 
+    public function getDescripcion() {
+        return $this->descripcion;
+    }
+
     public function setIdSolicitud($idSolicitud) {
         $this->idSolicitud = $idSolicitud;
+    }
+
+    public function setFechaSolicitud($fechaSolicitud) {
+        $this->fechaSolicitud = $fechaSolicitud;
     }
 
     public function setFechaInicio($fechaInicio) {
@@ -86,6 +103,12 @@ class Ausencia {
     public function setIdEmpleado($idEmpleado) {
         $this->idEmpleado = $idEmpleado;
     }
+
+    public function setDescripcion($descripcion) {
+        $this->descripcion = $descripcion;
+    }
 }
 
 ?>
+
+

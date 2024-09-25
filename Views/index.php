@@ -20,6 +20,7 @@
             <ul>
                 <li><a href="v.empleados.php">Empleados</a></li>
                 <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.familiar.php">Familiares</a></li>
                 <li><a href="v.ausencias.php">Permisos</a></li>
                 <li><a href="#">Evaluaciones</a></li>
             </ul>

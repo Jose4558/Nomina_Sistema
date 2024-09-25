@@ -1,110 +1,148 @@
 <?php
-require_once 'SQLSRVConnector.php';
+
 require_once '../Model/Ausencia.php';
+require_once '../Data/SQLSRVConnector.php';
 
 class AusenciaODB {
     private $connection;
 
     public function __construct() {
-        $this->connection = SQLSRVConnector::getInstance()->getConnection(); // Obtén la conexión aquí
+        $this->connection = SQLSRVConnector::getInstance()->getConnection();
         if ($this->connection === null) {
             die("Error: No se pudo establecer la conexión con la base de datos.");
         }
     }
 
-    public function getAll() : array {
-        $query = "SELECT * FROM Ausencias"; // Asegúrate de que la consulta sea la correcta
-        $result = $this->connection->query($query);
+    // Obtener todas las ausencias
+    public function getAll() {
+        $sql = "EXEC MostrarAusencias";
+        $stmt = $this->connection->query($sql);
         $ausencias = [];
-        while ($row = $result->fetch()) {
-            $ausencia = new Ausencia(
+
+        while ($row = $stmt->fetch()) {
+            $ausencias[] = new Ausencia(
                 $row['ID_Solicitud'],
+                $row['FechaSolicitud'],
                 $row['Fecha_Inicio'],
                 $row['Fecha_Fin'],
                 $row['Motivo'],
+                $row['Descripcion'],
                 $row['Estado'],
                 $row['Cuenta_Salario'],
                 $row['Descuento'],
                 $row['ID_Empleado']
             );
-            array_push($ausencias, $ausencia);
         }
+
         return $ausencias;
     }
 
-    public function getById($id) {
-        $query = "EXEC BuscarAusencia @ID_Solicitud = :ID_Solicitud";
-        try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->bindParam(':ID_Solicitud', $id, PDO::PARAM_INT);
-            $stmt->execute();
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($row) {
-                return new Ausencia(
-                    $row['ID_Solicitud'],
-                    $row['Fecha_Inicio'],
-                    $row['Fecha_Fin'],
-                    $row['Motivo'],
-                    $row['Estado'],
-                    $row['Cuenta_Salario'],
-                    $row['Descuento'],
-                    $row['ID_Empleado']
-                );
-            }
-        } catch (PDOException $e) {
-            error_log("Failed to execute query: " . $e->getMessage());
-            return null;
+    // Obtener una ausencia por su ID_Solicitud
+    public function getById($idSolicitud) {
+        $sql = "EXEC BuscarAusencia :idSolicitud";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(':idSolicitud', $idSolicitud);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        if ($row) {
+            return new Ausencia(
+                $row['ID_Solicitud'],
+                $row['FechaSolicitud'],
+                $row['Fecha_Inicio'],
+                $row['Fecha_Fin'],
+                $row['Motivo'],
+                $row['Descripcion'],
+                $row['Estado'],
+                $row['Cuenta_Salario'],
+                $row['Descuento'],
+                $row['ID_Empleado']
+            );
         }
 
         return null;
     }
 
+
+    // Insertar una nueva ausencia
     public function insert($ausencia) {
-        $query = "EXEC InsertarAusencia @Fecha_Inicio = :Fecha_Inicio, @Fecha_Fin = :Fecha_Fin, @Motivo = :Motivo, @Estado = :Estado, @Cuenta_Salario = :Cuenta_Salario, @Descuento = :Descuento, @ID_Empleado = :ID_Empleado";
         try {
+            // Asignar valores por defecto
+            $cuentaSalario = null; // Enviar como NULL
+            $descuento = null; // Enviar como NULL
+            $estado = 'PENDIENTE'; // Estado por defecto si faltan valores
+
+            // Obtener valores del objeto ausencia
+            $fechaSolicitud = $ausencia->getFechaSolicitud();
+            $fechaInicio = $ausencia->getFechaInicio();
+            $fechaFin = $ausencia->getFechaFin();
+            $motivo = $ausencia->getMotivo();
+            $descripcion = $ausencia->getDescripcion();
+            $idEmpleado = $ausencia->getIdEmpleado(); // Almacenar ID empleado en una variable
+
+            $query = "EXEC InsertarAusencia ?, ?, ?, ?, ?, ?, ?, ?, ?"; // Consulta
+
             $stmt = $this->connection->prepare($query);
-            $stmt->bindParam(':Fecha_Inicio', $ausencia->getFechaInicio());
-            $stmt->bindParam(':Fecha_Fin', $ausencia->getFechaFin());
-            $stmt->bindParam(':Motivo', $ausencia->getMotivo());
-            $stmt->bindParam(':Estado', $ausencia->getEstado());
-            $stmt->bindParam(':Cuenta_Salario', $ausencia->getCuentaSalario());
-            $stmt->bindParam(':Descuento', $ausencia->getDescuento());
-            $stmt->bindParam(':ID_Empleado', $ausencia->getIdEmpleado());
-            $stmt->execute();
+
+            // Asignar parámetros a la consulta
+            $stmt->bindParam(1, $fechaSolicitud, PDO::PARAM_STR);
+            $stmt->bindParam(2, $fechaInicio, PDO::PARAM_STR);
+            $stmt->bindParam(3, $fechaFin, PDO::PARAM_STR);
+            $stmt->bindParam(4, $motivo, PDO::PARAM_STR);
+            $stmt->bindParam(5, $descripcion, PDO::PARAM_STR);
+            $stmt->bindParam(6, $estado, PDO::PARAM_STR); // Usar estado por defecto
+            $stmt->bindParam(7, $cuentaSalario, PDO::PARAM_BOOL); // Enviar como NULL
+            $stmt->bindParam(8, $descuento, PDO::PARAM_STR); // Enviar como NULL
+            $stmt->bindParam(9, $idEmpleado, PDO::PARAM_INT); // Usar variable para ID Empleado
+
+            return $stmt->execute(); // Ejecutar consulta
         } catch (PDOException $e) {
-            error_log("Failed to execute query: " . $e->getMessage());
+            error_log("Error: " . $e->getMessage());
+            return false; // En caso de error
         }
     }
 
-    public function update($ausencia) {
-        $query = "EXEC ModificarAusencia @ID_Solicitud = :ID_Solicitud, @Motivo = :Motivo, @Fecha_Inicio = :Fecha_Inicio, @Fecha_Fin = :Fecha_Fin, @Estado = :Estado";
 
-        try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->bindParam(':ID_Solicitud', $ausencia->getIdSolicitud(), PDO::PARAM_INT);
-            $stmt->bindParam(':Motivo', $ausencia->getMotivo(), PDO::PARAM_STR);
-            $stmt->bindParam(':Fecha_Inicio', $ausencia->getFechaInicio(), PDO::PARAM_STR);
-            $stmt->bindParam(':Fecha_Fin', $ausencia->getFechaFin(), PDO::PARAM_STR);
-            $stmt->bindParam(':Estado', $ausencia->getEstado(), PDO::PARAM_STR);
-            $stmt->execute();
 
-            return true;
-        } catch (PDOException $e) {
-            error_log("Failed to execute query: " . $e->getMessage());
-            return false;
-        }
+
+    // Actualizar una ausencia existente
+    public function update($idAusencia, $idEmpleado, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento)
+    {
+        $sql = "EXEC ModificarAusencia 
+                @ID_Solicitud = :idSolicitud, 
+                @ID_Empleado = :idEmpleado, 
+                @FechaSolicitud = :fechaSolicitud,  -- Asegúrate de agregar este parámetro
+                @Fecha_Inicio = :fechaInicio, 
+                @Fecha_Fin = :fechaFin, 
+                @Motivo = :motivo, 
+                @Descripcion = :descripcion, 
+                @Estado = :estado, 
+                @Cuenta_Salario = :cuentaSalario, 
+                @Descuento = :descuento";
+
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(':idSolicitud', $idAusencia);
+        $stmt->bindParam(':idEmpleado', $idEmpleado);
+        $stmt->bindParam(':fechaSolicitud', $fechaSolicitud);  // Asegúrate de pasar el valor aquí
+        $stmt->bindParam(':fechaInicio', $fechaInicio);
+        $stmt->bindParam(':fechaFin', $fechaFin);
+        $stmt->bindParam(':motivo', $motivo);
+        $stmt->bindParam(':descripcion', $descripcion);
+        $stmt->bindParam(':estado', $estado);
+        $stmt->bindParam(':cuentaSalario', $cuentaSalario);
+        $stmt->bindParam(':descuento', $descuento);
+
+        return $stmt->execute();
     }
 
-    public function delete($id) {
-        $query = "EXEC BorrarAusencia @ID_Solicitud = :ID_Solicitud";
-
-        try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->bindParam(':ID_Solicitud', $id, PDO::PARAM_INT);
-            $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Failed to execute query: " . $e->getMessage());
-        }
+    // Eliminar una ausencia por su ID_Solicitud
+    public function delete($idSolicitud) {
+        $sql = "EXEC BorrarAusencia :idSolicitud";
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam(':idSolicitud', $idSolicitud);
+        $stmt->execute();
     }
-}
+
+    }
+
+?>
+

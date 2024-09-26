@@ -4,16 +4,19 @@ require_once '../Data/FamiliarODB.php';
 
 $familiarODB = new FamiliarODB();
 
-// Verificar si se ha enviado un ID_Familiar para eliminar
 if (isset($_GET['ID_Familiar'])) {
     $idFamiliar = $_GET['ID_Familiar'];
 
-    // Llamar al método para eliminar el familiar en el objeto de acceso a datos
-    $familiarODB->delete($idFamiliar);
-
-    // Redirigir con un parámetro de éxito
-    header('Location: ' . $_SERVER['PHP_SELF'] . '?action=deleted');
-    exit();
+    // Verificar si el ID_Solicitud es válido
+    if (is_numeric($idFamiliar)) {
+        // Llamar al método para eliminar la ausencia en el objeto de acceso a datos
+        $familiarODB->delete($idFamiliar);
+        // Redirigir con un parámetro de éxito
+        header('Location: ' . $_SERVER['PHP_SELF'] . '?action=deleted');
+        exit();
+    } else {
+        $message = 'ID de familiar inválido.';
+    }
 }
 
 // Obtener todos los familiares para mostrar en la tabla

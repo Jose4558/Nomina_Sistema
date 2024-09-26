@@ -181,4 +181,23 @@ class EmpleadoODB {
         $stmt->bindParam(':ID_Empleado', $id, PDO::PARAM_INT);
         $stmt->execute();
     }
+
+    public function getSalarioBase($idEmpleado) {
+        // Consulta para obtener el salario base de un empleado
+        $query = "SELECT Salario_Base FROM Empleado WHERE ID_Empleado = ?";
+        $stmt = $this->connection->prepare($query);
+
+        // Vincular el parámetro ID del empleado
+        $stmt->bindParam(1, $idEmpleado, PDO::PARAM_INT);
+
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // Obtener el resultado
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Devolver el salario base o null si no se encuentra el empleado
+        return $result ? $result['Salario_Base'] : null;
+    }
+
 }

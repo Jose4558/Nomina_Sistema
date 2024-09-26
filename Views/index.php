@@ -30,6 +30,7 @@
             <ul>
                 <li><a href="#">Pagos</a></li>
                 <li><a href="#">Deducciones</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
                 <li><a href="#">Bonificaciones</a></li>
             </ul>
         </li>

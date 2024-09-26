@@ -122,7 +122,7 @@ class FamiliarODB {
 
     public function delete($idFamiliar) {
         try {
-            $stmt = $this->connection->prepare("EXEC BorrarFamiliar :ID_Familiar");
+            $stmt = $this->connection->prepare("EXEC BorrarFamiliarPorID :ID_Familiar");
             $stmt->bindParam(':ID_Familiar', $idFamiliar, PDO::PARAM_INT);
             $stmt->execute();
             return true;

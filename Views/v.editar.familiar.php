@@ -11,7 +11,6 @@ $idFamiliar = $_GET['ID_Familiar'] ?? null;
 if ($idFamiliar) {
     $familiar = $familiarODB->getById($idFamiliar);
     $empleados = $empleadoODB->getAll();
-    var_dump($familiar);
 }
 
 

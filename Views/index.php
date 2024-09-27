@@ -20,6 +20,7 @@
             <ul>
                 <li><a href="v.empleados.php">Empleados</a></li>
                 <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
                 <li><a href="v.familiar.php">Familiares</a></li>
                 <li><a href="v.ausencias.php">Permisos</a></li>
                 <li><a href="#">Evaluaciones</a></li>
@@ -37,6 +38,7 @@
         <li>
             <a href="#">Contabilidad</a>
             <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
                 <li><a href="#">Cuentas por Cobrar</a></li>
                 <li><a href="#">Cuentas por Pagar</a></li>
                 <li><a href="#">Reportes Financieros</a></li>

@@ -1,105 +1,81 @@
 <?php
 
-class Comision
+class Comisiones
 {
     private $ID_Comision;
-    private $Mes;
-    private $Anio;
-    private $Monto_Ventas;
-    private $Porcentaje;
-    private $Comision;
-    private $ID_Empleado;
-    private $ID_Poliza;
+    private $mes;
+    private $anio;
+    private $montoVentas;
+    private $porcentaje;
+    private $comision;
+    private $idEmpleado;
 
-    public function __construct($ID_Comision, $Mes, $Anio, $Monto_Ventas, $Porcentaje, $Comision, $ID_Empleado, $ID_Poliza)
-    {
+    public function __construct($ID_Comision, $mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado) {
         $this->ID_Comision = $ID_Comision;
-        $this->Mes = $Mes;
-        $this->Anio = $Anio;
-        $this->Monto_Ventas = $Monto_Ventas;
-        $this->Porcentaje = $Porcentaje;
-        $this->Comision = $Comision;
-        $this->ID_Empleado = $ID_Empleado;
-        $this->ID_Poliza = $ID_Poliza;
+        $this->mes = $mes;
+        $this->anio = $anio;
+        $this->montoVentas = $montoVentas;
+        $this->porcentaje = $porcentaje;
+        $this->comision = $comision;
+        $this->idEmpleado = $idEmpleado;
     }
 
-    public function getIDComision()
-    {
+    // Métodos Getters
+    public function getIDComision() {
         return $this->ID_Comision;
     }
 
-    public function getMes()
-    {
-        return $this->Mes;
+    public function getMes() {
+        return $this->mes;
     }
 
-    public function getAnio()
-    {
-        return $this->Anio;
+    public function getAnio() {
+        return $this->anio;
     }
 
-    public function getMontoVentas()
-    {
-        return $this->Monto_Ventas;
+    public function getMontoVentas() {
+        return $this->montoVentas;
     }
 
-    public function getPorcentaje()
-    {
-        return $this->Porcentaje;
+    public function getPorcentaje() {
+        return $this->porcentaje;
     }
 
-    public function getComision()
-    {
-        return $this->Comision;
+    public function getComision() {
+        return $this->comision;
     }
 
-    public function getIDEmpleado()
-    {
-        return $this->ID_Empleado;
+    public function getIDEmpleado() {
+        return $this->idEmpleado;
     }
 
-    public function getIDPoliza()
-    {
-        return $this->ID_Poliza;
-    }
-
-    public function setID_Comision($ID_Comision)
-    {
+    // Métodos Setters
+    public function setIDComision($ID_Comision) {
         $this->ID_Comision = $ID_Comision;
     }
 
-    public function setMes($Mes)
-    {
-        $this->Mes = $Mes;
+    public function setMes($mes) {
+        $this->mes = $mes;
     }
 
-    public function setAnio($Anio)
-    {
-        $this->Anio = $Anio;
+    public function setAnio($anio) {
+        $this->anio = $anio;
     }
 
-    public function setMontoVentas($Monto_Ventas)
-    {
-        $this->Monto_Ventas = $Monto_Ventas;
+    public function setMontoVentas($montoVentas) {
+        $this->montoVentas = $montoVentas;
     }
 
-    public function setPorcentaje($Porcentaje)
-    {
-        $this->Porcentaje = $Porcentaje;
+    public function setPorcentaje($porcentaje) {
+        $this->porcentaje = $porcentaje;
     }
 
-    public function setComision($Comision)
-    {
-        $this->Comision = $Comision;
+    public function setComision($comision) {
+        $this->comision = $comision;
     }
 
-    public function setID_Empleado($ID_Empleado)
-    {
-        $this->ID_Empleado = $ID_Empleado;
-    }
-
-    public function setID_Poliza($ID_Poliza)
-    {
-        $this->ID_Poliza = $ID_Poliza;
+    public function setIDEmpleado($idEmpleado) {
+        $this->idEmpleado = $idEmpleado;
     }
 }
+

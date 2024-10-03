@@ -31,7 +31,6 @@
             <ul>
                 <li><a href="#">Pagos</a></li>
                 <li><a href="#">Deducciones</a></li>
-                <li><a href="v.horasextras.php">Horas Extras</a></li>
                 <li><a href="#">Bonificaciones</a></li>
             </ul>
         </li>
@@ -39,9 +38,19 @@
             <a href="#">Contabilidad</a>
             <ul>
                 <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
                 <li><a href="#">Cuentas por Cobrar</a></li>
                 <li><a href="#">Cuentas por Pagar</a></li>
                 <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="#">Pagos de Prestamos</a></li>
             </ul>
         </li>
         <li>

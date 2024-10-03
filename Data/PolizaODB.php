@@ -3,7 +3,7 @@
 require_once 'SQLSRVConnector.php';
 require_once '../Model/Poliza.php';
 
-class PolizaContableODB {
+class PolizaODB {
     private $connection;
 
     public function __construct() {
@@ -19,7 +19,7 @@ class PolizaContableODB {
 
         $polizas = [];
         while ($row = $result->fetch()) {
-            $poliza = new PolizaContable(
+            $poliza = new Poliza(
                 $row['ID_Poliza'],
                 $row['Fecha'],
                 $row['Descripción'],
@@ -41,7 +41,7 @@ class PolizaContableODB {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($row) {
-                return new PolizaContable(
+                return new Poliza(
                     $row['ID_Poliza'],
                     $row['Fecha'],
                     $row['Descripción'],

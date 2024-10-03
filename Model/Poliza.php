@@ -1,6 +1,5 @@
 <?php
-
-class PolizaContable
+class Poliza
 {
     private $ID_Poliza;
     private $Fecha;
@@ -67,4 +66,3 @@ class PolizaContable
         $this->Cuenta_Contable = $Cuenta_Contable;
     }
 }
-?>

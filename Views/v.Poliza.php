@@ -3,7 +3,7 @@
 require_once '../Model/Poliza.php';
 require_once '../Data/PolizaODB.php';
 
-$polizaContableODB = new PolizaContableODB();
+$polizaContableODB = new PolizaODB();
 
 // Verificar si se ha enviado un ID_Poliza para eliminar
 if (isset($_GET['ID_Poliza'])) {
@@ -65,8 +65,8 @@ $polizas = $polizaContableODB->getAll();
                     <td><?php echo htmlspecialchars($poliza->getMonto()); ?></td>
                     <td><?php echo htmlspecialchars($poliza->getCuentaContable()); ?></td>
                     <td>
-                        <a href="v.editar.poliza.php?ID_Poliza=<?php echo $poliza->getIdPoliza(); ?>">Editar</a>
-                        <a href="?ID_Poliza=<?php echo $poliza->getIdPoliza(); ?>" onclick="return confirm('¿Estás seguro de que deseas eliminar esta póliza?');">Eliminar</a>
+                        <a href="v.editar.poliza.php?ID_Poliza=<?php echo $poliza->getIdPoliza(); ?>" class="btn btn-editar">Editar</a>
+                        <button class="btn btn-eliminar" data-id="<?php echo $poliza->getIdPoliza(); ?>">Eliminar</button>
                     </td>
                 </tr>
             <?php endforeach; ?>

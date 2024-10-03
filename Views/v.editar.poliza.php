@@ -1,7 +1,7 @@
 <?php
 require_once '../Data/PolizaODB.php';
 
-$polizaContableODB = new PolizaContableODB();
+$polizaContableODB = new PolizaODB();
 
 $idPoliza = $_GET['ID_Poliza'] ?? null;
 

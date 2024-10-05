@@ -183,3 +183,36 @@ footer {
 footer p {
     margin: 0;
 }
+
+.boton-nuevo-pago {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+}
+
+.btn-nuevo-pago {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px 40px;
+    font-size: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-nuevo-pago:hover {
+    background-color: #45a049;
+}
+
+.btn-buscar {
+    background-color: #3085d6;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-buscar:hover {
+    background-color: #2874a6;
+}

@@ -24,7 +24,6 @@ class PolizaODB {
                 $row['Fecha'],
                 $row['Descripción'],
                 $row['Monto'],
-                $row['Cuenta_Contable']
             );
             array_push($polizas, $poliza);
         }

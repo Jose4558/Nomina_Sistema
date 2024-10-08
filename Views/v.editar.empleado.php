@@ -21,29 +21,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $salarioBase = $_POST['Salario_Base'];
     $deptoId = $_POST['Depto_ID'];
     $foto = !empty($_FILES['Foto']['tmp_name']) ? file_get_contents($_FILES['Foto']['tmp_name']) : null;
+    $CuentaContable = $_POST['Cuenta_Contable'];
 
-    $result = $empleadoODB->update($idEmpleado, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $deptoId, $foto);
+    $result = $empleadoODB->update($idEmpleado, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $deptoId, $foto, $CuentaContable);
 
     if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'El empleado ha sido modificado correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.empleados.php';
-                }
-            });
-        </script>";
+        // Redireccionar a la vista de empleados si la inserción fue exitosa
+        header("Location: v.empleados.php?action=created");
+        exit(); // Importante: asegura la terminación del script después de la redirección
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al modificar el empleado.',
-                icon: 'error'
-            });
-        </script>";
+        // En caso de error en la inserción, podrías mostrar un mensaje de error o simplemente redirigir
+        header("Location: v.empleados.php?action=error");
+        exit();
     }
 }
 ?>
@@ -56,16 +45,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Empleado</title>
     <link rel="stylesheet" href="../Styles/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Validar la longitud de caracteres en Nombre y Apellido
+        function validarLongitud(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.setCustomValidity("Este campo no puede tener más de " + maxLength + " caracteres.");
+            } else {
+                input.setCustomValidity(""); // Restablecer si es válido
+            }
+        }
+
+        // Validar que solo se ingresen números en el campo de Cuenta Contable
+        function validarNumeros(input) {
+            const regex = /^[0-9]*$/; // Solo números
+            if (!regex.test(input.value)) {
+                input.setCustomValidity("Solo se permiten números.");
+            } else {
+                input.setCustomValidity(""); // Restablecer si es válido
+            }
+        }
+
+        // Validar fecha de nacimiento
+        function validarFechaNacimiento() {
+            var fechaNacimiento = new Date(document.getElementById('Fecha_Nac').value);
+            var fechaActual = new Date();
+
+            var fechaMinima = new Date();
+            fechaMinima.setFullYear(fechaActual.getFullYear() - 70);
+
+            var fechaMaxima = new Date();
+            fechaMaxima.setFullYear(fechaActual.getFullYear() - 18);
+
+            if (fechaNacimiento < fechaMinima || fechaNacimiento > fechaMaxima) {
+                document.getElementById('Fecha_Nac').setCustomValidity("Debe ser mayor de 18 años y menor de 70.");
+                return false;
+            } else {
+                document.getElementById('Fecha_Nac').setCustomValidity(""); // Restablecer si es válido
+                return true;
+            }
+        }
+
+        function validarFechaContratacion() {
+            var fechaContratacion = new Date(document.getElementById('Fecha_Contra').value);
+            var fechaActual = new Date();
+
+            if (fechaContratacion > fechaActual) {
+                document.getElementById('Fecha_Contra').setCustomValidity("La fecha de contratación no puede ser futura.");
+                return false;
+            } else {
+                document.getElementById('Fecha_Contra').setCustomValidity(""); // Restablecer si es válido
+                return true;
+            }
+        }
+
+        // Validación del formulario al enviar
+        function validarFormulario() {
+            return validarFechaNacimiento() && validarFechaContratacion();
+        }
+    </script>
+
 </head>
 <body>
 <header>
     <h1>Editar Empleado</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
+            <li><a href="v.empleados.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -79,20 +125,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Nombre">Nombre:</label>
-                <input type="text" id="nombre" name="Nombre" value="<?php echo htmlspecialchars($empleado->getNombre()); ?>" required>
+                <input type="text" id="Nombre" name="Nombre" value="<?php echo htmlspecialchars($empleado->getNombre()); ?>" required maxlength="50" oninput="validarLongitud(this, 50)" title="El nombre no puede tener más de 50 caracteres.">
             </div>
+
             <div class="form-group">
                 <label for="Apellido">Apellido:</label>
-                <input type="text" id="apellido" name="Apellido" value="<?php echo htmlspecialchars($empleado->getApellido()); ?>" required>
+                <input type="text" id="Apellido" name="Apellido" value="<?php echo htmlspecialchars($empleado->getApellido()); ?>" required maxlength="50" oninput="validarLongitud(this, 50)" title="El apellido no puede tener más de 50 caracteres.">
             </div>
+
             <div class="form-group">
                 <label for="Fecha_Nac">Fecha de Nacimiento:</label>
-                <input type="date" id="fecha_nac" name="Fecha_Nac" value="<?php echo htmlspecialchars($empleado->getFechaNacimiento()); ?>" required>
+                <input type="date" id="Fecha_Nac" name="Fecha_Nac" value="<?php echo htmlspecialchars($empleado->getFechaNacimiento()); ?>" required title="Debe ser mayor de 18 años y menor de 100." oninput="validarFechaNacimiento()">
             </div>
+
             <div class="form-group">
                 <label for="Fecha_Contra">Fecha de Contratación:</label>
-                <input type="date" id="fecha_contra" name="Fecha_Contra" value="<?php echo htmlspecialchars($empleado->getFechaContratacion()); ?>" required>
+                <input type="date" id="Fecha_Contra" name="Fecha_Contra" value="<?php echo htmlspecialchars($empleado->getFechaContratacion()); ?>" required title="La fecha de contratación no puede ser futura." oninput="validarFechaContratacion()">
             </div>
+
             <div class="form-group">
                 <label for="Salario_Base">Salario Base:</label>
                 <input type="number" id="salario_base" name="Salario_Base" value="<?php echo htmlspecialchars($empleado->getSalarioBase()); ?>" required>
@@ -108,6 +158,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </option>
                     <?php endforeach; ?>
                 </select>
+            </div>
+            <div class="form-group">
+                <label for="Cuenta_Contable">Cuenta Contable:</label>
+                <input type="text" id="cuentaContable" name="Cuenta_Contable" value="<?php echo htmlspecialchars($empleado->getCuentaContable()); ?>" required>
             </div>
             <div class="form-group">
                 <label for="Foto">Foto:</label>

@@ -7,13 +7,12 @@ class Poliza
     private $Monto;
     private $Cuenta_Contable;
 
-    public function __construct($ID_Poliza, $Fecha, $Descripcion, $Monto, $Cuenta_Contable)
+    public function __construct($ID_Poliza, $Fecha, $Descripcion, $Monto)
     {
         $this->ID_Poliza = $ID_Poliza;
         $this->Fecha = $Fecha;
         $this->Descripcion = $Descripcion;
         $this->Monto = $Monto;
-        $this->Cuenta_Contable = $Cuenta_Contable;
     }
 
     public function getIDPoliza()
@@ -36,11 +35,6 @@ class Poliza
         return $this->Monto;
     }
 
-    public function getCuentaContable()
-    {
-        return $this->Cuenta_Contable;
-    }
-
     public function setIDPoliza($ID_Poliza)
     {
         $this->ID_Poliza = $ID_Poliza;
@@ -59,10 +53,5 @@ class Poliza
     public function setMonto($Monto)
     {
         $this->Monto = $Monto;
-    }
-
-    public function setCuentaContable($Cuenta_Contable)
-    {
-        $this->Cuenta_Contable = $Cuenta_Contable;
     }
 }

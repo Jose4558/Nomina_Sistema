@@ -19,28 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $archivo = (!empty($_FILES['Archivo']['tmp_name']) && !$quitarArchivo) ? file_get_contents($_FILES['Archivo']['tmp_name']) : null;
 
     $result = $expedienteODB->update($idExpediente, $tipoDocumento, $archivo, $idEmpleado);
-
-
     if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'El expediente ha sido modificado correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.lista.expedientes.php';
-                }
-            });
-        </script>";
+        // Redireccionar a la vista de empleados si la inserción fue exitosa
+        header("Location: v.Expediente.php?action=created");
+        exit(); // Importante: asegura la terminación del script después de la redirección
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al modificar el expediente.',
-                icon: 'error'
-            });
-        </script>";
+        // En caso de error en la inserción, podrías mostrar un mensaje de error o simplemente redirigir
+        header("Location: v.Expediente.php?action=error");
+        exit();
     }
 }
 ?>
@@ -53,14 +39,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Modificar Expediente</title>
     <link rel="stylesheet" href="../Styles/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function validarLongitud(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.setCustomValidity("Este campo no puede tener más de " + maxLength + " caracteres.");
+            } else {
+                input.setCustomValidity(""); // Restablecer si es válido
+            }
+        }
+    </script>
 </head>
 <body>
 <header>
     <h1>Modificar Expediente</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.Expediente.php">Expedientes</a></li>
+            <li><a href="v.Expediente.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -69,21 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="form-section">
         <h2>Modificar Expediente</h2>
         <form action="v.editar.expediente.php?ID_Expediente=<?php echo htmlspecialchars($idExpediente); ?>" method="POST" enctype="multipart/form-data" class="form-crear-editar">
-            <!-- Campo oculto para ID_Expediente no modificable -->
-            <div class="form-group">
-                <label for="ID_Expediente">ID del Expediente:</label>
-                <input type="text" id="id_expediente" name="ID_Expediente" value="<?php echo htmlspecialchars($expediente->getIdExpediente()); ?>" readonly>
-            </div>
 
-            <!-- Campo no modificable para ID_Empleado -->
-            <div class="form-group">
-                <label for="ID_Empleado">ID del Empleado:</label>
-                <input type="text" id="id_empleado" name="ID_Empleado" value="<?php echo htmlspecialchars($expediente->getIdEmpleado()); ?>" readonly>
-            </div>
+            <input type="hidden" name="ID_Expediente" value="<?php echo htmlspecialchars($expediente->getIdExpediente()); ?>">
+
+            <input type="hidden" name="ID_Empleado" value="<?php echo htmlspecialchars($expediente->getIdEmpleado()); ?>">
 
             <div class="form-group">
                 <label for="Tipo_Documento">Tipo de Documento:</label>
-                <input type="text" id="tipo_documento" name="Tipo_Documento" value="<?php echo htmlspecialchars($expediente->getTipoDocumento()); ?>" required>
+                <input type="text" id="tipo_documento" name="Tipo_Documento" value="<?php echo htmlspecialchars($expediente->getTipoDocumento()); ?>" required maxlength="50" oninput="validarLongitud(this, 30)" title="El tipo de documento no puede tener más de 30 caracteres.">
             </div>
 
             <!-- Manejo de archivo -->

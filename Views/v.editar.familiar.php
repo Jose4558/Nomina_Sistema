@@ -23,28 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idEmpleado = $_POST['ID_Empleado'];
 
     $result = $familiarODB->update($idFamiliar, $nombre, $apellido, $relacion, $fechaNacimiento, $idEmpleado);
-
     if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'El familiar ha sido modificado correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.familiares.php';
-                }
-            });
-        </script>";
+        echo "<script>Swal.fire('Éxito', 'Familiar actualizado correctamente', 'success');</script>";
+        header("Location: v.familiar.php?ID_Empleado=$idEmpleado"); // Redirigir a otra vista
+        exit();
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al modificar el familiar.',
-                icon: 'error'
-            });
-        </script>";
+        echo "<script>Swal.fire('Error', 'No se pudo actualizar el familiar', 'error');</script>";
     }
+
 }
 ?>
 
@@ -57,14 +43,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../Styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // Validar la longitud de caracteres en Nombre y Apellido
+    function validarLongitud(input, maxLength) {
+        if (input.value.length > maxLength) {
+            input.setCustomValidity("Este campo no puede tener más de " + maxLength + " caracteres.");
+        } else {
+            input.setCustomValidity(""); // Restablecer si es válido
+        }
+    }
+
+    // Validar fecha de nacimiento
+    function validarFechaNacimiento() {
+        var fechaNacimiento = new Date(document.getElementById('fechaNacimiento').value);
+        var fechaActual = new Date();
+
+        var fechaMinima = new Date();
+        fechaMinima.setFullYear(fechaActual.getFullYear() - 100);
+
+        var fechaMaxima = new Date();
+        fechaMaxima.setFullYear(fechaActual.getFullYear() - 18);
+
+        if (fechaNacimiento < fechaMinima || fechaNacimiento > fechaMaxima) {
+            document.getElementById('fechaNacimiento').setCustomValidity("Debe ser mayor de 18 años y menor de 100.");
+            return false;
+        } else {
+            document.getElementById('fechaNacimiento').setCustomValidity(""); // Restablecer si es válido
+            return true;
+        }
+    }
+
+    // Validación del formulario al enviar
+    function validarFormulario() {
+        return validarFechaNacimiento();
+    }
+
+    const nuevoEmpleadoButton = document.querySelector('.btn-submit');
+    document.addEventListener('DOMContentLoaded', function() {
+        const nuevoEmpleadoButton = document.getElementById('nuevoEmpleadoButton');
+        if (nuevoEmpleadoButton) {
+            nuevoEmpleadoButton.addEventListener('click', function(event) {
+                const idEmpleado = this.getAttribute('data-id-empleado');
+                const form = document.getElementById('familiarForm');
+                form.action = `v.familiar.php?ID_Empleado=${idEmpleado}`; // Setear la acción del formulario
+                form.submit(); // Enviar el formulario
+            });
+        }
+    });
+</script>
+
 </head>
 <body>
 <header>
     <h1>Editar Familiar</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.familiar.php">Familiares</a></li>
+            <li><a id="nuevoEmpleadoButton" data-id-empleado="<?php echo $familiar->getIdEmpleado(); ?>">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -77,19 +112,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Nombre">Nombre:</label>
-                <input type="text" id="nombre" name="Nombre" value="<?php echo htmlspecialchars($familiar->getNombre()); ?>" required>
+                <input type="text" id="Nombre" name="Nombre" value="<?php echo htmlspecialchars($familiar->getNombre()); ?>" required maxlength="50" oninput="validarLongitud(this, 50)" title="El nombre no puede tener más de 50 caracteres.">
             </div>
+
             <div class="form-group">
                 <label for="Apellido">Apellido:</label>
-                <input type="text" id="apellido" name="Apellido" value="<?php echo htmlspecialchars($familiar->getApellido()); ?>" required>
+                <input type="text" id="Apellido" name="Apellido" value="<?php echo htmlspecialchars($familiar->getApellido()); ?>" required maxlength="50" oninput="validarLongitud(this, 50)" title="El apellido no puede tener más de 50 caracteres.">
             </div>
             <div class="form-group">
                 <label for="Relacion">Relacion:</label>
                 <input type="text" id="relacion" name="Relacion" value="<?php echo htmlspecialchars($familiar->getRelacion()); ?>" required>
             </div>
             <div class="form-group">
-                <label for="Fecha_Nacimiento">Fecha Nacimiento:</label>
-                <input type="date" id="fechaNacimiento" name="Fecha_Nacimiento" value="<?php echo htmlspecialchars($familiar->getFechaNacimiento()); ?>" required>
+                <label for="Fecha_Nacimiento">Fecha de Nacimiento:</label>
+                <input type="date" id="fechaNacimiento" name="Fecha_Nacimiento" value="<?php echo htmlspecialchars($familiar->getFechaNacimiento()); ?>" required title="Debe ser mayor de 18 años y menor de 100." oninput="validarFechaNacimiento()">
             </div>
             <div class="form-group">
                 <label for="ID_Empleado">Empleado:</label>
@@ -103,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
             </div>
             <div class="form-group form-buttons">
-                <button type="submit" class="btn-submit">Actualizar Registro</button>
+                <button id="actualizarFamiliarButton" data-id-empleado="<?php echo $familiar->getIdEmpleado(); ?>" type="submit" class="btn-submit">Actualizar Familiar</button>
             </div>
         </form>
 

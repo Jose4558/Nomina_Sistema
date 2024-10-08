@@ -1,52 +1,92 @@
 <?php
 require_once '../Model/Familiar.php';
 require_once '../Data/FamiliarODB.php';
+require_once '../Model/Empleado.php';
 
 $familiarODB = new FamiliarODB();
 
-if (isset($_GET['ID_Familiar'])) {
-    $idFamiliar = $_GET['ID_Familiar'];
+$idEmpleado = $_GET['ID_Empleado'] ?? null; // Asegúrate de que esto esté al inicio
 
-    // Verificar si el ID_Solicitud es válido
-    if (is_numeric($idFamiliar)) {
-        // Llamar al método para eliminar la ausencia en el objeto de acceso a datos
-        $familiarODB->delete($idFamiliar);
-        // Redirigir con un parámetro de éxito
-        header('Location: ' . $_SERVER['PHP_SELF'] . '?action=deleted');
-        exit();
-    } else {
-        $message = 'ID de familiar inválido.';
-    }
+if (isset($_GET['ID_Familiar']) && is_numeric($_GET['ID_Familiar'])) {
+    $idFamiliar = $_GET['ID_Familiar'];
+    $familiarODB->delete($idFamiliar);
+
+    // Redirecciona incluyendo el ID_Empleado y la acción realizada
+    header('Location: ' . $_SERVER['PHP_SELF'] . '?ID_Empleado=' . $idEmpleado . '&action=deleted');
+    exit();
+} elseif (isset($_GET['ID_Familiar'])) {
+    $message = 'ID de familiar inválido.';
 }
 
 // Obtener todos los familiares para mostrar en la tabla
-$familiares = $familiarODB->getAll();
-
+$familiares = $familiarODB->buscarFamiliaresPorEmpleado($idEmpleado);
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>Lista de Familiares</title>
     <link rel="stylesheet" href="../Styles/styles.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.1/dist/sweetalert2.min.css" rel="stylesheet">
 </head>
-
 <body>
 <header>
     <h1>Gestión de Familiares</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#" class="active">Familiares</a></li>
-            <li><a href="v.nuevo.familiar.php">Nuevo</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.familiar.php">Familiares</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+                <li><a href="#">Evaluaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Cuentas por Cobrar</a></li>
+                <li><a href="#">Cuentas por Pagar</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="Familiares">
         <h2>Familiares Registrados</h2>
@@ -57,7 +97,7 @@ $familiares = $familiarODB->getAll();
                 <th>Apellido</th>
                 <th>Relación</th>
                 <th>Fecha de Nacimiento</th>
-                <th>ID. Empleado</th>
+                <th>Nombe del Empleado</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -68,15 +108,16 @@ $familiares = $familiarODB->getAll();
                     <td><?php echo htmlspecialchars($familiar->getApellido()); ?></td>
                     <td><?php echo htmlspecialchars($familiar->getRelacion()); ?></td>
                     <td><?php echo htmlspecialchars($familiar->getFechaNacimiento()); ?></td>
-                    <td><?php echo htmlspecialchars($familiar->getidEmpleado()); ?></td>
+                    <td><?php echo htmlspecialchars($familiar->getNombreCompleto()); ?></td>
                     <td>
                         <a href="v.editar.familiar.php?ID_Familiar=<?php echo $familiar->getIdFamiliar(); ?>" class="btn btn-editar">Editar</a>
-                        <button class="btn btn-eliminar" data-id="<?php echo $familiar->getIdFamiliar(); ?>">Eliminar</button>
+                        <button class="btn btn-eliminar" data-id="<?php echo $familiar->getIdFamiliar(); ?>" data-id-empleado="<?php echo $familiar->getIdEmpleado(); ?>">Eliminar</button>
                     </td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
         </table>
+        <button data-id-empleado="<?php echo $familiar->getIdEmpleado(); ?>" class="btn-nuevo">Agregar Nuevo Familiar +</button>
     </section>
 </main>
 
@@ -91,6 +132,7 @@ $familiares = $familiarODB->getAll();
     deleteButtons.forEach(button => {
         button.addEventListener('click', function() {
             const familiarId = this.getAttribute('data-id');
+            const empleadoId = this.getAttribute('data-id-empleado'); // Obtiene el ID del empleado
 
             Swal.fire({
                 text: "Seguro que quieres eliminar el registro, no podrás revertir esta acción.",
@@ -102,13 +144,22 @@ $familiares = $familiarODB->getAll();
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = `?ID_Familiar=${familiarId}`;
+                    window.location.href = `?ID_Familiar=${familiarId}&ID_Empleado=${empleadoId}`; // Incluye el ID_Empleado en la redirección
                 }
             });
         });
     });
+
+    const nuevoEmpleadoButton = document.querySelector('.btn-nuevo');
+
+    if (nuevoEmpleadoButton) {
+        nuevoEmpleadoButton.addEventListener('click', function() {
+            const idEmpleado = this.getAttribute('data-id-empleado');
+            window.location.href = `v.nuevo.familiar.php?ID_Empleado=${idEmpleado}`;
+        });
+    }
+
 </script>
 </body>
-
 </html>
 

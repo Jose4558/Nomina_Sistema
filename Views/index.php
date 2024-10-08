@@ -67,7 +67,7 @@
 <main>
     <h2>Políticas de la Empresa</h2>
     <p>
-        En esta sección se detallan las políticas y normativas de [Nombre de la Empresa]. Nuestro objetivo es
+        En esta sección se detallan las políticas y normativas de T Consulting. Nuestro objetivo es
         garantizar que cada empleado y área de la empresa cuente con un entorno estructurado y alineado a las mejores
         prácticas. Aquí encontrarás información sobre procedimientos, códigos de conducta, y mucho más.
     </p>

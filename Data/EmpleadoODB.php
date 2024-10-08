@@ -29,7 +29,8 @@ class EmpleadoODB {
                 $row['Salario_Base'],
                 new Departamento($row['ID_Departamento'], $row['Departamento']),
                 $row['Foto'],
-                1 // Activo siempre será 1 en este caso, porque ya se filtraron los inactivos
+                1,// Activo siempre será 1 en este caso, porque ya se filtraron los inactivos
+                 $row['Cuenta_Contable']
             );
             array_push($empleados, $empleado);
         }
@@ -57,7 +58,8 @@ class EmpleadoODB {
                     $row['Salario_Base'],
                     $departamento,
                     $row['Foto'],
-                    $row['Activo']
+                    $row['Activo'],
+                    $row['Cuenta_Contable']
                 );
             }
         } catch (PDOException $e) {
@@ -68,7 +70,7 @@ class EmpleadoODB {
         return null;
     }
 
-    public function update($idEmpleado, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $deptoId, $foto) {
+    public function update($idEmpleado, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $deptoId, $foto, $Cuenta_Contable) {
         try {
             if ($foto) {
                 // Consulta cuando hay una foto
@@ -80,7 +82,8 @@ class EmpleadoODB {
                         @Fecha_Contratacion = :Fecha_Contratacion, 
                         @Salario_Base = :Salario_Base, 
                         @ID_Departamento = :ID_Departamento, 
-                        @Foto = :Foto";
+                        @Foto = :Foto,
+                        @Cuenta_Contable = :Cuenta_Contable";
             } else {
                 // Consulta cuando no hay foto
                 $query = "EXEC ModificarEmpleado 
@@ -91,7 +94,8 @@ class EmpleadoODB {
                         @Fecha_Contratacion = :Fecha_Contratacion, 
                         @Salario_Base = :Salario_Base, 
                         @ID_Departamento = :ID_Departamento, 
-                        @Foto = NULL";
+                        @Foto = NULL,
+                        @Cuenta_Contable = :Cuenta_Contable";
             }
 
             $stmt = $this->connection->prepare($query);
@@ -102,6 +106,8 @@ class EmpleadoODB {
             $stmt->bindParam(':Fecha_Contratacion', $fechaContratacion);
             $stmt->bindParam(':Salario_Base', $salarioBase);
             $stmt->bindParam(':ID_Departamento', $deptoId, PDO::PARAM_INT);
+            $stmt->bindParam(':Cuenta_Contable', $Cuenta_Contable);
+
 
             if ($foto) {
                 $stmt->bindParam(':Foto', $foto, PDO::PARAM_LOB);
@@ -117,6 +123,8 @@ class EmpleadoODB {
             $queryDebug = str_replace(':Salario_Base', $salarioBase, $queryDebug);
             $queryDebug = str_replace(':ID_Departamento', $deptoId, $queryDebug);
             $queryDebug = str_replace(':Foto', $foto ? 'BLOB DATA' : 'NULL', $queryDebug);
+            $stmt->bindParam(':Cuenta_Contable', $Cuenta_Contable);
+
             error_log("SQL Query: $queryDebug");
 
             $result = $stmt->execute();

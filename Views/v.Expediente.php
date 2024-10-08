@@ -35,30 +35,85 @@ $expedientes = $expedienteODB->getAll();
 <body>
 <header>
     <h1>Gestión de Expedientes</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#" class="active">Expedientes</a></li>
-            <li><a href="v.nuevo.expediente.php">Nuevo</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.familiar.php">Familiares</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+                <li><a href="#">Evaluaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Cuentas por Cobrar</a></li>
+                <li><a href="#">Cuentas por Pagar</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="Expedientes">
+        <div class="search-bar">
+            <form method="GET" action="">
+                <label for="search">Buscar por Empleado:</label>
+                <input type="text" id="search" name="nombreCompleto" placeholder="Nombre Completo">
+                <button type="submit" class="btn">Buscar</button>
+            </form>
+        </div>
         <h2>Expedientes Registrados</h2>
         <table>
             <thead>
             <tr>
                 <th>Tipo de Documento</th>
                 <th>Archivo</th>
-                <th>ID Empleado</th>
+                <th>Nombre del Empleado</th>
                 <th>Acciones</th>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($expedientes as $expediente) : ?>
+            <?php
+            if (isset($_GET['nombreCompleto'])) {
+                $expedientes = $expedienteODB-> buscarPorNombre($_GET['nombreCompleto']);
+            }
+            foreach ($expedientes as $expediente) : ?>
                 <tr>
                     <td><?php echo htmlspecialchars($expediente->getTipoDocumento()); ?></td>
                     <td>
@@ -67,8 +122,7 @@ $expedientes = $expedienteODB->getAll();
                         <?php else : ?>
                             Sin archivo
                         <?php endif; ?>
-                    </td>
-                    <td><?php echo htmlspecialchars($expediente->getIdEmpleado()); ?></td>
+                    <td><?php echo htmlspecialchars($expediente->getNombreCompleto()); ?></td>
                     <td>
                         <a href="v.editar.expediente.php?ID_Expediente=<?php echo $expediente->getIdExpediente(); ?>" class="btn btn-editar">Editar</a>
                         <button class="btn btn-eliminar" data-id="<?php echo $expediente->getIdExpediente(); ?>">Eliminar</button>
@@ -77,6 +131,7 @@ $expedientes = $expedienteODB->getAll();
             <?php endforeach; ?>
             </tbody>
         </table>
+        <button class="btn-nuevo">Agregar Nuevo Expediente +</button>
     </section>
 </main>
 
@@ -107,6 +162,14 @@ $expedientes = $expedienteODB->getAll();
             });
         });
     });
+
+    const nuevoEmpleadoButton = document.querySelector('.btn-nuevo');
+
+    if (nuevoEmpleadoButton) {
+        nuevoEmpleadoButton.addEventListener('click', function() {
+            window.location.href = 'v.nuevo.expediente.php';
+        });
+    }
 </script>
 </body>
 

@@ -63,7 +63,6 @@ $polizas = $polizaContableODB->getAll();
                     <td><?php echo htmlspecialchars($poliza->getFecha()); ?></td>
                     <td><?php echo htmlspecialchars($poliza->getDescripcion()); ?></td>
                     <td><?php echo htmlspecialchars($poliza->getMonto()); ?></td>
-                    <td><?php echo htmlspecialchars($poliza->getCuentaContable()); ?></td>
                     <td>
                         <a href="v.editar.poliza.php?ID_Poliza=<?php echo $poliza->getIdPoliza(); ?>" class="btn btn-editar">Editar</a>
                         <button class="btn btn-eliminar" data-id="<?php echo $poliza->getIdPoliza(); ?>">Eliminar</button>

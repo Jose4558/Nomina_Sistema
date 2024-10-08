@@ -95,19 +95,19 @@ class FamiliarODB {
 
             // Definir la consulta SQL usando parámetros posicionales
             $query = "EXEC InsertarFamiliar @Nombre = ?, 
-                                          @Apellido = ?, 
-                                          @Relacion = ?, 
-                                          @FechaNacimiento = ?, 
-                                          @ID_Empleado = ?";
+                                        @Apellido = ?, 
+                                        @Relacion = ?, 
+                                        @FechaNacimiento = ?, 
+                                        @ID_Empleado = ?";
 
             // Preparar la declaración SQL
             $stmt = $this->connection->prepare($query);
 
-            // Vincular los parámetros
-            $stmt->bindParam(1, $nombre);
-            $stmt->bindParam(2, $apellido);
-            $stmt->bindParam(3, $relacion);
-            $stmt->bindParam(4, $fechaNacimiento);
+            // Vincular los parámetros con sus tipos correctos
+            $stmt->bindParam(1, $nombre, PDO::PARAM_STR);
+            $stmt->bindParam(2, $apellido, PDO::PARAM_STR);
+            $stmt->bindParam(3, $relacion, PDO::PARAM_STR);
+            $stmt->bindParam(4, $fechaNacimiento, PDO::PARAM_STR);
             $stmt->bindParam(5, $idEmpleado, PDO::PARAM_INT);
 
             // Ejecutar la declaración y devolver el resultado
@@ -132,5 +132,29 @@ class FamiliarODB {
         }
     }
 
+    public function buscarFamiliaresPorEmpleado($idEmpleado) {
+        $familiares = [];
+        try {
+            $query = "EXEC BuscarFamiliarPorEmpleado @ID_Empleado = :idEmpleado";
+            $stmt = $this->connection->prepare($query);
+            $stmt->bindParam(':idEmpleado', $idEmpleado, PDO::PARAM_STR);
+            $stmt->execute();
+            while ($row = $stmt->fetch()) {
+                $familiar = new Familiar(
+                    $row['IDFamiliar'],
+                    $row['Nombre'],
+                    $row['Apellido'],
+                    $row['Relacion'],
+                    $row['FechaNacimiento'],
+                    $row['ID_Empleado'],
+                    $row['NombreCompleto']
+            );
+                array_push($familiares, $familiar);
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        return $familiares;
+    }
 }
 ?>

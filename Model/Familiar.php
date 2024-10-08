@@ -8,13 +8,16 @@ class Familiar {
     private $fechaNacimiento;
     private $idEmpleado; // ID del empleado relacionado
 
-    public function __construct($idFamiliar = null, $nombre, $apellido, $relacion, $fechaNacimiento, $idEmpleado) {
+    private $NombreCompleto;
+
+    public function __construct($idFamiliar = null, $nombre, $apellido, $relacion, $fechaNacimiento, $idEmpleado, $NombreCompleto = null) {
         $this->idFamiliar = $idFamiliar; // Puede ser null
         $this->nombre = $nombre;
         $this->apellido = $apellido;
         $this->relacion = $relacion;
         $this->fechaNacimiento = $fechaNacimiento;
         $this->idEmpleado = $idEmpleado; // ID del empleado que es familiar
+        $this->NombreCompleto = $NombreCompleto; // ID del empleado que es familiar
     }
 
     // Getters y Setters
@@ -43,6 +46,10 @@ class Familiar {
         return $this->idEmpleado;
     }
 
+    public function getNombreCompleto() {
+        return $this->NombreCompleto;
+    }
+
     public function setIdFamiliar($idFamiliar) {
         $this->idFamiliar = $idFamiliar;
     }
@@ -65,6 +72,10 @@ class Familiar {
 
     public function setIdEmpleado($idEmpleado) {
         $this->idEmpleado = $idEmpleado;
+    }
+
+    public function setNombreCompleto($NombreCompleto) {
+        return $this->NombreCompleto;
     }
 }
 

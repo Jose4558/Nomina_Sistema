@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fecha = $_POST['Fecha'];
     $descripcion = $_POST['Descripción'];
     $monto = $_POST['Monto'];
-    $cuentaContable = $_POST['Cuenta_Contable'];
 
     $result = $polizaContableODB->update($idPoliza, $fecha, $descripcion, $monto, $cuentaContable);
 

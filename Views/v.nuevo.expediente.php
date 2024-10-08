@@ -23,37 +23,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Llamar al método insert
     $result = $expedienteODB->insert($expediente);
-
     if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'Expediente insertado correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.expedientes.php?action=created';
-                }
-            });
-        </script>";
+        echo "<script>Swal.fire('Éxito', 'Familiar actualizado correctamente', 'success');</script>";
+        header("Location: v.expediente.php"); // Redirigir a otra vista
+        exit();
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Error al insertar el expediente.',
-                icon: 'error'
-            });
-        </script>";
+        echo "<script>Swal.fire('Error', 'No se pudo actualizar el familiar', 'error');</script>";
     }
-} else {
-    echo "<script>
-        Swal.fire({
-            title: 'Advertencia',
-            text: 'Por favor, completa todos los campos requeridos.',
-            icon: 'warning'
-        });
-    </script>";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -65,14 +43,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../Styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function validarLongitud(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.setCustomValidity("Este campo no puede tener más de " + maxLength + " caracteres.");
+            } else {
+                input.setCustomValidity(""); // Restablecer si es válido
+            }
+        }
+    </script>
 </head>
 <body>
 <header>
     <h1>Crear Nuevo Expediente</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.Expediente.php">Expedientes</a></li>
+            <li><a href="v.Expediente.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -83,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form id="expedienteForm" action="v.nuevo.expediente.php" method="POST" enctype="multipart/form-data" class="form-crear-editar">
             <div class="form-group">
                 <label for="Tipo_Documento">Tipo de Documento:</label>
-                <input type="text" id="tipo_documento" name="Tipo_Documento" required>
+                <input type="text" id="tipo_documento" name="Tipo_Documento" required maxlength="50" oninput="validarLongitud(this, 30)" title="El tipo de documento no puede tener más de 30 caracteres.">
             </div>
             <div class="form-group">
                 <label for="ID_Empleado">Empleado:</label>

@@ -25,13 +25,46 @@ class ExpedienteODB {
                 $row['ID_Expediente'],
                 $row['Tipo_Documento'],
                 $row['Archivo'],
-                $row['ID_Empleado']
+                $row['ID_Empleado'],
+                $row['NombreCompleto']
             );
             array_push($expedientes, $expediente);
         }
 
         return $expedientes;
     }
+
+public function buscarPorNombre($nombreCompleto): array {
+    // Preparar la consulta que ejecuta el procedimiento almacenado
+    $query = "EXEC BuscarExpedienteEmpleado :nombreCompleto";
+
+    // Preparar la sentencia
+    $stmt = $this->connection->prepare($query);
+
+    // Vincular el parámetro
+    $stmt->bindParam(':nombreCompleto', $nombreCompleto, PDO::PARAM_STR);
+
+    // Ejecutar la consulta
+    $stmt->execute();
+
+    // Crear un array para almacenar los resultados
+    $expedientes = [];
+
+    // Recorrer los resultados y crear objetos Expediente
+    while ($row = $stmt->fetch()) {
+        $expediente = new Expediente(
+            $row['ID_Expediente'],
+            $row['Tipo_Documento'],
+            $row['Archivo'],
+            $row['ID_Empleado'],
+            $row['NombreCompleto']
+        );
+        array_push($expedientes, $expediente);
+    }
+
+    // Retornar el array de expedientes
+    return $expedientes;
+}
 
     // Obtener un expediente por ID
     public function getById($id) {

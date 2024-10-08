@@ -15,45 +15,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $salarioBase = isset($_POST['Salario_Base']) ? $_POST['Salario_Base'] : null;
     $departamentoID = isset($_POST['Depto_ID']) ? $_POST['Depto_ID'] : null;
     $foto = !empty($_FILES['Foto']['tmp_name']) ? file_get_contents($_FILES['Foto']['tmp_name']) : null;
+    $Cuenta_Contable = isset($_POST['Cuenta_Contable']) ? $_POST['Cuenta_Contable'] : null;
 
     if ($nombre && $apellido && $fechaNacimiento && $fechaContratacion && $salarioBase && $departamentoID) {
+        // Crear el objeto de Departamento
         $departamento = new Departamento($departamentoID, "Nombre del departamento");
-        $empleado = new Empleado(null, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $departamento, $foto, 1);
 
+        // Crear el objeto de Empleado
+        $empleado = new Empleado(null, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $departamento, $foto, 1, $Cuenta_Contable);
+
+        // Insertar el empleado en la base de datos
         if ($empleadoODB->insert($empleado)) {
-            echo "<script>
-                Swal.fire({
-                    title: 'Éxito',
-                    text: 'Empleado insertado correctamente.',
-                    icon: 'success'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'v.empleados.php?action=created';
-                    }
-                });
-            </script>";
+            // Redireccionar a la vista de empleados si la inserción fue exitosa
+            header("Location: v.empleados.php?action=created");
+            exit(); // Importante: asegura la terminación del script después de la redirección
         } else {
-            echo "<script>
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Error al insertar el empleado.',
-                    icon: 'error'
-                });
-            </script>";
+            // En caso de error en la inserción, podrías mostrar un mensaje de error o simplemente redirigir
+            header("Location: v.empleados.php?action=error");
+            exit();
         }
-    } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Advertencia',
-                text: 'Por favor, completa todos los campos requeridos.',
-                icon: 'warning'
-            });
-        </script>";
     }
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -61,16 +44,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Nuevo Empleado</title>
     <link rel="stylesheet" href="../Styles/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Validar la longitud de caracteres en Nombre y Apellido
+        function validarLongitud(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.setCustomValidity("Este campo no puede tener más de " + maxLength + " caracteres.");
+            } else {
+                input.setCustomValidity(""); // Restablecer si es válido
+            }
+        }
+
+        // Validar que solo se ingresen números en el campo de Cuenta Contable
+        function validarNumeros(input) {
+            const regex = /^[0-9]*$/; // Solo números
+            if (!regex.test(input.value)) {
+                input.setCustomValidity("Solo se permiten números.");
+            } else {
+                input.setCustomValidity(""); // Restablecer si es válido
+            }
+        }
+
+        // Validar fecha de nacimiento
+        function validarFechaNacimiento() {
+            var fechaNacimiento = new Date(document.getElementById('fecha_nac').value);
+            var fechaActual = new Date();
+
+            var fechaMinima = new Date();
+            fechaMinima.setFullYear(fechaActual.getFullYear() - 70);
+
+            var fechaMaxima = new Date();
+            fechaMaxima.setFullYear(fechaActual.getFullYear() - 18);
+
+            if (fechaNacimiento < fechaMinima || fechaNacimiento > fechaMaxima) {
+                document.getElementById('fecha_nac').setCustomValidity("Debe ser mayor de 18 años y menor de 70.");
+                return false;
+            } else {
+                document.getElementById('fecha_nac').setCustomValidity(""); // Restablecer si es válido
+                return true;
+            }
+        }
+
+        function validarFechaContratacion() {
+            var fechaContratacion = new Date(document.getElementById('fecha_contra').value);
+            var fechaActual = new Date();
+
+            if (fechaContratacion > fechaActual) {
+                document.getElementById('fecha_contra').setCustomValidity("La fecha de contratación no puede ser futura.");
+                return false;
+            } else {
+                document.getElementById('fecha_contra').setCustomValidity(""); // Restablecer si es válido
+                return true;
+            }
+        }
+
+        // Validación del formulario al enviar
+        function validarFormulario() {
+            return validarFechaNacimiento() && validarFechaContratacion();
+        }
+    </script>
 </head>
 <body>
 <header>
     <h1>Crear Nuevo Empleado</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
+            <li><a href="v.empleados.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -78,27 +117,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <main>
     <section class="form-section">
         <h2>Registrar Empleado</h2>
-        <form id="empleadoForm" action="v.nuevo.empleado.php" method="POST" enctype="multipart/form-data" class="form-crear-editar">
+        <form id="empleadoForm" action="v.nuevo.empleado.php" method="POST" enctype="multipart/form-data" class="form-crear-editar" onsubmit="return validarFormulario()">
             <div class="form-group">
                 <label for="Nombre">Nombre:</label>
-                <input type="text" id="nombre" name="Nombre" required>
+                <input type="text" id="nombre" name="Nombre" required maxlength="50"
+                       oninput="validarLongitud(this, 50)" title="El nombre no puede tener más de 50 caracteres.">
             </div>
+
             <div class="form-group">
                 <label for="Apellido">Apellido:</label>
-                <input type="text" id="apellido" name="Apellido" required>
+                <input type="text" id="apellido" name="Apellido" required maxlength="50"
+                       oninput="validarLongitud(this, 50)" title="El apellido no puede tener más de 50 caracteres.">
             </div>
+
             <div class="form-group">
                 <label for="Fecha_Nac">Fecha de Nacimiento:</label>
-                <input type="date" id="fecha_nac" name="Fecha_Nac" required>
+                <input type="date" id="fecha_nac" name="Fecha_Nac" required
+                       title="Debe ser mayor de 18 años y menor de 100." oninput="validarFechaNacimiento()">
             </div>
+
             <div class="form-group">
                 <label for="Fecha_Contra">Fecha de Contratación:</label>
-                <input type="date" id="fecha_contra" name="Fecha_Contra" required>
+                <input type="date" id="fecha_contra" name="Fecha_Contra" required
+                       title="La fecha de contratación no puede ser futura." oninput="validarFechaContratacion()">
             </div>
+
             <div class="form-group">
                 <label for="Salario_Base">Salario Base:</label>
                 <input type="number" id="salario_base" name="Salario_Base" required>
             </div>
+
             <div class="form-group">
                 <label for="Depto_ID">Departamento:</label>
                 <select id="depto_id" name="Depto_ID" required>
@@ -110,10 +158,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endforeach; ?>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="Cuenta_Contable">Cuenta Contable:</label>
+                <input type="text" id="cuenta_contable" name="Cuenta_Contable" required
+                       oninput="validarNumeros(this)" maxlength="20"
+                       title="Solo se permiten números.">
+            </div>
+
             <div class="form-group">
                 <label for="Foto">Foto:</label>
                 <input type="file" id="foto" name="Foto">
             </div>
+
             <div class="form-group form-buttons">
                 <button type="submit" class="btn-submit">Crear Empleado</button>
             </div>
@@ -127,4 +184,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
-

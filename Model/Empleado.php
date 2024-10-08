@@ -11,7 +11,9 @@ class Empleado {
     private $foto;
     private $activo; // Nuevo campo para estado
 
-    public function __construct($idEmpleado = null, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $departamento, $foto, $activo = 1) {
+    private $Cuenta_Contable;
+
+    public function __construct($idEmpleado = null, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $departamento, $foto, $activo = 1, $Cuenta_Contable) {
         $this->idEmpleado = $idEmpleado; // Puede ser null
         $this->nombre = $nombre;
         $this->apellido = $apellido;
@@ -21,6 +23,7 @@ class Empleado {
         $this->departamento = $departamento; // Debe ser una instancia de la clase Departamento
         $this->foto = $foto;
         $this->activo = $activo; // 0 para inactivo, 1 para activo
+        $this->Cuenta_Contable = $Cuenta_Contable;
     }
 
 
@@ -62,6 +65,11 @@ class Empleado {
         return $this->activo;
     }
 
+    public function getCuentaContable()
+    {
+        return $this->Cuenta_Contable;
+    }
+
     public function setIdEmpleado($idEmpleado) {
         $this->idEmpleado = $idEmpleado;
     }
@@ -96,6 +104,11 @@ class Empleado {
 
     public function setActivo($activo) {
         $this->activo = $activo;
+    }
+
+    public function setCuentaContable($Cuenta_Contable)
+    {
+        $this->Cuenta_Contable = $Cuenta_Contable;
     }
 }
 

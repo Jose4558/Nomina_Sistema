@@ -45,16 +45,57 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
 <body>
 <header>
     <h1>Gestión de Ausencias</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#" class="active">Ausencias</a></li>
-            <li><a href="v.nueva.ausencia.php">Nueva Ausencia</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.familiar.php">Familiares</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+                <li><a href="#">Evaluaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Cuentas por Cobrar</a></li>
+                <li><a href="#">Cuentas por Pagar</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="Ausencias">
         <h2>Ausencias Registradas</h2>
@@ -103,6 +144,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
             <?php endforeach; ?>
             </tbody>
         </table>
+        <button class="btn-nuevo">Agregar Nueva Ausencia</button>
     </section>
 </main>
 
@@ -112,6 +154,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // Código para manejar los botones de eliminación
     const deleteButtons = document.querySelectorAll('.btn-eliminar');
 
     deleteButtons.forEach(button => {
@@ -133,7 +176,18 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
             });
         });
     });
+
+    // Código para manejar el botón "Agregar Nueva Ausencia"
+    const nuevaAusenciaButton = document.querySelector('.btn-nuevo');
+
+    if (nuevaAusenciaButton) {
+        nuevaAusenciaButton.addEventListener('click', function() {
+            window.location.href = 'v.nueva.ausencia.php';
+        });
+    }
 </script>
+
+
 </body>
 
 </html>

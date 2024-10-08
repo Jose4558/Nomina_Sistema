@@ -5,15 +5,15 @@ class Expediente {
     private $tipoDocumento;
     private $archivo;
     private $idEmpleado; // FK a la tabla Empleado
+    private $NombreCompleto;
 
-    public function __construct($idExpediente = null, $tipoDocumento, $archivo, $idEmpleado) {
+    public function __construct($idExpediente = null, $tipoDocumento, $archivo, $idEmpleado, $NombreCompleto = null) {
         $this->idExpediente = $idExpediente; // Puede ser null
         $this->tipoDocumento = $tipoDocumento;
         $this->archivo = $archivo;
         $this->idEmpleado = $idEmpleado; // Debe ser un ID válido de la tabla Empleado
+        $this->NombreCompleto = $NombreCompleto; // ID del empleado que es familiar
     }
-
-    // Getters y Setters
 
     public function getIdExpediente() {
         return $this->idExpediente;
@@ -31,6 +31,10 @@ class Expediente {
         return $this->idEmpleado;
     }
 
+    public function getNombreCompleto() {
+        return $this->NombreCompleto;
+    }
+
     public function setIdExpediente($idExpediente) {
         $this->idExpediente = $idExpediente;
     }
@@ -45,6 +49,10 @@ class Expediente {
 
     public function setIdEmpleado($idEmpleado) {
         $this->idEmpleado = $idEmpleado;
+    }
+
+    public function setNombreCompleto($NombreCompleto) {
+        return $this->NombreCompleto;
     }
 }
 

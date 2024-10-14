@@ -89,15 +89,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Registrar_Pago'])) {
 <body>
 <header>
     <h1>Realizar Pago</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#" class="active">Historial de Pagos</a></li>
-            <li><a href="v.nuevo.pago.php">Historial de Pagos</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <form method="POST" action="v.RealizarPago.php">
         <input type="hidden" name="ID_Pago" value="<?php echo $idPago; ?>">

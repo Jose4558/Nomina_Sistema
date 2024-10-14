@@ -12,11 +12,17 @@ $idComision = $_GET['ID_Comision'] ?? null;
 if ($idComision) {
     // Obtener los datos de la comisión y la póliza relacionada
     $comision = $comisionesODB->getByID($idComision);
-    $idPoliza = $comision["ID_Poliza"];  // Acceder como objeto
-    $poliza = $polizaODB->getById($idPoliza);  // Obtener la póliza por su ID
+    $idEmpleado = $comision["ID_Empleado"];
+
+    // Obtener el empleado para acceder a la cuenta contable
+    $empleado = $empleadoODB->getById($idEmpleado);
+
+    // Obtener la póliza relacionada
+    $idPoliza = $comision["ID_Poliza"];
+    $poliza = $polizaODB->getById($idPoliza);
+
     $empleados = $empleadoODB->getAll(); // Obtener todos los empleados
 }
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Recoger datos del formulario
@@ -32,31 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Llamar al método de actualización
     $result = $comisionesODB->update($idComision, $mes, $anio, $montoVentas, $porcentaje, $idEmpleado, $descripcion, $cuentaContable);
 
-    // Verificar resultado
     if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'La comisión ha sido modificada correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.comisiones.php';
-                }
-            });
-        </script>";
+        header("Location: v.comisiones.php?action=created");
+        exit(); // Termina el script después de la redirección
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al modificar la comisión.',
-                icon: 'error'
-            });
-        </script>";
+        header("Location: v.comisiones.php?action=error");
+        exit();
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -66,14 +56,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../Styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Actualizar el campo de cuenta contable cuando se cambie el empleado seleccionado
+        function actualizarCuentaContable(empleados) {
+            const empleadoSelect = document.getElementById('id_empleado');
+            const cuentaContableInput = document.getElementById('cuentaContable');
+
+            empleadoSelect.addEventListener('change', function () {
+                const empleadoSeleccionado = this.value;
+
+                // Buscar la cuenta contable del empleado seleccionado en el array de empleados
+                const empleado = empleados.find(emp => emp.id === empleadoSeleccionado);
+
+                if (empleado) {
+                    cuentaContableInput.value = empleado.cuentaContable;
+                }
+            });
+        }
+
+        // Datos de los empleados obtenidos de PHP
+        document.addEventListener('DOMContentLoaded', function() {
+            const empleados = <?php echo json_encode(array_map(function($empleado) {
+                return [
+                    'id' => $empleado->getIdEmpleado(),
+                    'cuentaContable' => $empleado->getCuentaContable()
+                ];
+            }, $empleados)); ?>;
+
+            actualizarCuentaContable(empleados);
+        });
+    </script>
 </head>
 <body>
 <header>
     <h1>Editar Comisión</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.comisiones.php">Comisiones</a></li>
+            <li><a href="v.comisiones.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -98,16 +117,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group">
                 <label for="Porcentaje">Porcentaje:</label>
-                <input type="text" id="porcentaje" name="Porcentaje" value="<?php echo htmlspecialchars($comision['Porcentaje']); ?>" required>
+                <input type="text" id="porcentaje" name="Porcentaje" value="<?php echo htmlspecialchars($comision['Porcentaje']); ?>" required readonly>
             </div>
             <div class="form-group">
                 <label for="Descripcion">Descripción:</label>
-                <textarea id="descripcion" name="Descripcion" required><?php echo htmlspecialchars($poliza->getDescripcion()); ?></textarea>
+                <textarea id="descripcion" name="Descripcion" readonly required>Comisión sobre Ventas.</textarea>
             </div>
-            <div class="form-group">
-                <label for="Cuenta_Contable">Cuenta Contable:</label>
-                <input type="text" id="cuentaContable" name="Cuenta_Contable" value="<?php echo htmlspecialchars($poliza->getCuentaContable()); ?>" required>
-            </div>
+
+            <input type="hidden" id="cuentaContable" name="Cuenta_Contable" value="<?php echo htmlspecialchars($empleado->getCuentaContable()); ?>">
+
             <div class="form-group">
                 <label for="ID_Empleado">Empleado:</label>
                 <select id="id_empleado" name="ID_Empleado" required>

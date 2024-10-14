@@ -31,6 +31,10 @@ class ExpedienteODB {
             array_push($expedientes, $expediente);
         }
 
+        if (empty($expedientes)) {
+            return []; // Retorna un array vacío si no se encuentra ningún expediente
+        }
+
         return $expedientes;
     }
 
@@ -128,8 +132,6 @@ public function buscarPorNombre($nombreCompleto): array {
         }
     }
 
-    // Insertar un nuevo expediente
-    // Insertar un nuevo expediente
     public function insert($expediente) {
         try {
             $tipoDocumento = $expediente->getTipoDocumento();

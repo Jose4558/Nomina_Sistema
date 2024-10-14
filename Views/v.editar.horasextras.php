@@ -31,27 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Llamada al método de actualización
     $result = $horasExtrasODB->update($horasExtras);
-    if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'Las horas extras han sido actualizadas correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.horasextras.php';
-                }
-            });
-        </script>";
-    } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al actualizar las horas extras.',
-                icon: 'error'
-            });
-        </script>";
-    }
+
+        if ($result) {
+            header("Location: v.horasextras.php?action=created");
+            exit(); // Termina el script después de la redirección
+        } else {
+            header("Location: v.horasextras.php?action=error");
+            exit();
+        }
 }
 ?>
 
@@ -72,8 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Editar Horas Extras</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.horasextras.php">Horas Extras</a></li>
+            <li><a href="v.horasextras.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -82,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="form-section">
         <h2>Modificar Horas Extras</h2>
         <form id="horasExtrasForm" action="v.editar.horasextras.php?ID_HoraExtra=<?php echo htmlspecialchars($idHoraExtra); ?>" method="POST" enctype="multipart/form-data" class="form-crear-editar">
-            <!-- Campo oculto para ID_HoraExtra -->
             <input type="hidden" name="ID_HoraExtra" value="<?php echo htmlspecialchars($idHoraExtra); ?>">
 
             <div class="form-group">

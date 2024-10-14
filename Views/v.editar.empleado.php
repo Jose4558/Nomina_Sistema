@@ -20,17 +20,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fechaContratacion = $_POST['Fecha_Contra'];
     $salarioBase = $_POST['Salario_Base'];
     $deptoId = $_POST['Depto_ID'];
-    $foto = !empty($_FILES['Foto']['tmp_name']) ? file_get_contents($_FILES['Foto']['tmp_name']) : null;
     $CuentaContable = $_POST['Cuenta_Contable'];
+
+    // Obtener la foto existente del formulario
+    $fotoActual = $_POST['FotoActual'];
+
+    // Si se sube una nueva foto, la procesamos, si no, mantenemos la foto actual
+    if (!empty($_FILES['Foto']['tmp_name'])) {
+        $nombreFoto = $_FILES['Foto']['name'];
+        $temporal = $_FILES['Foto']['tmp_name'];
+        $carpeta = '../Imagenes';
+        $rutaFoto = $carpeta . '/' . basename($nombreFoto);
+
+        if (move_uploaded_file($temporal, $rutaFoto)) {
+            $foto = $rutaFoto; // Nueva foto
+        } else {
+            $foto = $fotoActual; // Mantener la foto actual si falla el upload
+        }
+    } else {
+        $foto = $fotoActual; // Mantener la foto actual si no se sube una nueva
+    }
 
     $result = $empleadoODB->update($idEmpleado, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $deptoId, $foto, $CuentaContable);
 
     if ($result) {
-        // Redireccionar a la vista de empleados si la inserción fue exitosa
-        header("Location: v.empleados.php?action=created");
-        exit(); // Importante: asegura la terminación del script después de la redirección
+        header("Location: v.empleados.php?action=updated");
+        exit();
     } else {
-        // En caso de error en la inserción, podrías mostrar un mensaje de error o simplemente redirigir
         header("Location: v.empleados.php?action=error");
         exit();
     }
@@ -120,7 +136,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="form-section">
         <h2>Modificar Empleado</h2>
         <form id="empleadoForm" action="v.editar.empleado.php?ID_Empleado=<?php echo htmlspecialchars($idEmpleado); ?>" method="POST" enctype="multipart/form-data" class="form-crear-editar">
-            <!-- Campo oculto para ID_Empleado -->
             <input type="hidden" name="ID_Empleado" value="<?php echo htmlspecialchars($idEmpleado); ?>">
 
             <div class="form-group">
@@ -163,14 +178,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="Cuenta_Contable">Cuenta Contable:</label>
                 <input type="text" id="cuentaContable" name="Cuenta_Contable" value="<?php echo htmlspecialchars($empleado->getCuentaContable()); ?>" required>
             </div>
+            <input type="hidden" name="FotoActual" value="<?php echo htmlspecialchars($empleado->getFoto()); ?>">
             <div class="form-group">
-                <label for="Foto">Foto:</label>
-                <input type="file" id="foto" name="Foto">
-                <!-- Mostrar imagen existente -->
+                <label for="Foto">Foto Actual:</label>
                 <?php if ($empleado->getFoto()) : ?>
-                    <img src="../uploads/<?php echo htmlspecialchars($empleado->getFoto()); ?>" alt="Foto del Empleado" width="100">
+                    <img src="<?php echo htmlspecialchars($empleado->getFoto()); ?>" alt="Foto del empleado" style="width: 100px; height: 100px;">
+                <?php else : ?>
+                    <p>No se ha subido una foto.</p>
                 <?php endif; ?>
             </div>
+
+            <div class="form-group">
+                <label for="Foto">Nueva Foto (opcional):</label>
+                <input type="file" id="foto" name="Foto" accept=".jpg,.jpeg,.png,.gif">
+            </div>
+
             <div class="form-group form-buttons">
                 <button type="submit" class="btn-submit">Actualizar Registro</button>
             </div>

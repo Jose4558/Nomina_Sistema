@@ -31,16 +31,56 @@ $prestamos = $prestamoODB->getAll();
 <body>
 <header>
     <h1>Gestión de Préstamos</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#" class="active">Préstamos</a></li>
-            <li><a href="v.nuevo.prestamo.php">Nuevo Prestamo</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="Prestamos">
         <h2>Préstamos Registrados</h2>
@@ -59,11 +99,11 @@ $prestamos = $prestamoODB->getAll();
             <tbody>
             <?php foreach ($prestamos as $prestamo) : ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($prestamo->getMonto()); ?></td>
+                    <td><?php echo number_format($prestamo->getMonto(), 2); ?></td>
                     <td><?php echo htmlspecialchars($prestamo->getCuotas()); ?></td>
                     <td><?php echo htmlspecialchars($prestamo->getFechaInicio()); ?></td>
                     <td><?php echo htmlspecialchars($prestamo->getCuotasRestantes()); ?></td>
-                    <td><?php echo htmlspecialchars($prestamo->getSaldoPendiente()); ?></td>
+                    <td><?php echo number_format($prestamo->getSaldoPendiente(), 2); ?></td>
                     <td><?php echo htmlspecialchars($prestamo->getIdEmpleado()); ?></td>
                     <td>
                         <a href="v.editar.prestamo.php?ID_Prestamo=<?php echo $prestamo->getIdPrestamo(); ?>" class="btn btn-editar">Editar</a>

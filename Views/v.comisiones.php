@@ -34,16 +34,56 @@ $comisiones = $comisionODB->getAll();
 <body>
 <header>
     <h1>Gestión de Comisiones</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.comisiones.php" class="active">Comisiones</a></li>
-            <li><a href="v.nueva.comision.php">Nueva Comisión</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="Comisiones">
         <h2>Comisiones Registradas</h2>
@@ -55,7 +95,8 @@ $comisiones = $comisionODB->getAll();
                 <th>Monto Ventas</th>
                 <th>Porcentaje</th>
                 <th>Comisión</th>
-                <th>Empleado</th>
+                <th>Nombre del Empleado</th>
+                <th>No. Cuenta</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -67,7 +108,8 @@ $comisiones = $comisionODB->getAll();
                     <td><?php echo htmlspecialchars($comision->getMontoVentas()); ?></td>
                     <td><?php echo htmlspecialchars($comision->getPorcentaje()); ?>%</td>
                     <td><?php echo htmlspecialchars($comision->getComision()); ?></td>
-                    <td><?php echo htmlspecialchars($comision->getIDEmpleado()); ?></td>
+                    <td><?php echo htmlspecialchars($comision->getNombreCompleto()); ?></td>
+                    <td><?php echo htmlspecialchars($comision->getCuentaContable()); ?></td>
                     <td>
                         <a href="v.editar.comisiones.php?ID_Comision=<?php echo $comision->getIDComision(); ?>" class="btn btn-editar">Editar</a>
                         <button class="btn btn-eliminar" data-id="<?php echo $comision->getIDComision(); ?>">Eliminar</button>
@@ -76,9 +118,9 @@ $comisiones = $comisionODB->getAll();
             <?php endforeach; ?>
             </tbody>
         </table>
+        <button class="btn-nuevo">Agregar Nueva Comision +</button>
     </section>
 </main>
-
 <footer>
     <p>&copy; 2024 TConsulting. Todos los derechos reservados.</p>
 </footer>
@@ -106,7 +148,15 @@ $comisiones = $comisionODB->getAll();
             });
         });
     });
+
+    const nuevoEmpleadoButton = document.querySelector('.btn-nuevo');
+
+    if (nuevoEmpleadoButton) {
+        nuevoEmpleadoButton.addEventListener('click', function() {
+            window.location.href = 'v.nueva.comision.php';
+        });
+    }
+
 </script>
 </body>
-
 </html>

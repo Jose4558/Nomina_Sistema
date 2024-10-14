@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $montoVentas = floatval($_POST['Monto_Ventas']);
     $idEmpleado = intval($_POST['ID_Empleado']);
     $descripcion = $_POST['Descripcion'];
-    $cuentaContable = $_POST['Cuenta_Contable'];
 
     // Calcular el porcentaje de comisión según el monto de ventas
     if ($montoVentas >= 0 && $montoVentas <= 100000) {
@@ -31,28 +30,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comision = ($montoVentas * $porcentaje) / 100;
 
     // Insertar la comisión y póliza
-    $result = $comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion, $cuentaContable);
+    $result = $comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion, $cuentaContable); // Cambia '0' por la cuenta contable si es necesario.
 
-    if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'La comisión ha sido registrada correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.comisiones.php';
-                }
-            });
-        </script>";
+    if ($comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion, $cuentaContable)) {
+        header("Location: v.comisiones.php?action=created");
+        exit(); // Termina el script después de la redirección
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al registrar la comisión.',
-                icon: 'error'
-            });
-        </script>";
+        header("Location: v.comisiones.php?action=error");
+        exit();
     }
 }
 ?>
@@ -71,8 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Registrar Comisión</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.comisiones.php">Comisiones</a></li>
+            <li><a href="v.comisiones.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -86,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group">
                 <label for="Anio">Año:</label>
-                <input type="number" id="anio" name="Anio" min="2000" required>
+                <input type="number" id="anio" name="Anio" value="<?php echo date('Y'); ?>" readonly required>
             </div>
             <div class="form-group">
                 <label for="Monto_Ventas">Monto Ventas:</label>
@@ -105,12 +89,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group">
                 <label for="Descripcion">Descripción:</label>
-                <textarea id="descripcion" name="Descripcion" required></textarea>
+                <textarea id="descripcion" name="Descripcion" readonly required>Comisión Sobre Ventas</textarea>
             </div>
-            <div class="form-group">
-                <label for="Cuenta_Contable">Cuenta Contable:</label>
-                <input type="text" id="cuentaContable" name="Cuenta_Contable" required>
-            </div>
+            <input type="hidden" name="Cuenta_Contable" value="0">
             <input type="hidden" name="Comision" value="<?php echo htmlspecialchars($comision, ENT_QUOTES, 'UTF-8'); ?>">
             <div class="form-group form-buttons">
                 <button type="submit" class="btn-submit">Registrar Comisión</button>
@@ -123,3 +104,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </footer>
 </body>
 </html>
+

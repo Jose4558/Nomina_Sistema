@@ -2,6 +2,8 @@
 
 require_once 'SQLSRVConnector.php';
 require_once '../Model/Poliza.php';
+require_once '../Model/Comisiones.php';
+require_once '../Model/Produccion.php';
 
 class PolizaODB {
     private $connection;
@@ -24,6 +26,9 @@ class PolizaODB {
                 $row['Fecha'],
                 $row['Descripción'],
                 $row['Monto'],
+                $row['ID_Empleado'],
+                $row['NombreCompleto'],
+                $row['Cuenta_Contable']
             );
             array_push($polizas, $poliza);
         }
@@ -45,6 +50,8 @@ class PolizaODB {
                     $row['Fecha'],
                     $row['Descripción'],
                     $row['Monto'],
+                    $row['ID_Empleado'],
+                    $row['NombreCompleto'],
                     $row['Cuenta_Contable']
                 );
             }
@@ -52,75 +59,61 @@ class PolizaODB {
             error_log("Failed to execute query: " . $e->getMessage());
             return null;
         }
-
         return null;
     }
 
-    public function update($idPoliza, $fecha, $descripcion, $monto, $cuentaContable) {
-        $query = "EXEC ModificarPoliza 
-              @ID_Poliza = :ID_Poliza, 
-              @Fecha = :Fecha, 
-              @Descripción = :Descripción, 
-              @Monto = :Monto, 
-              @Cuenta_Contable = :Cuenta_Contable";
+    public function getComisionesByPoliza(int $idPoliza): array {
+        $query = "EXEC BuscarComisionesPorPoliza @ID_Poliza = :idPoliza";
+        $stmt = $this->connection->prepare($query);
 
-        try {
-            $stmt = $this->connection->prepare($query);
-            $stmt->bindParam(':ID_Poliza', $idPoliza, PDO::PARAM_INT);
-            $stmt->bindParam(':Fecha', $fecha);
-            $stmt->bindParam(':Descripción', $descripcion);
-            $stmt->bindParam(':Monto', $monto);
-            $stmt->bindParam(':Cuenta_Contable', $cuentaContable);
+        // Usar bindValue en vez de bind_param
+        $stmt->bindValue(':idPoliza', $idPoliza, PDO::PARAM_INT);
 
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Failed to execute update: " . $e->getMessage());
-            return false;
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        $comisiones = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            // Crear instancia de Comisiones
+            $comision = new Comisiones(
+                $row['ID_Comision'],
+                $row['Mes'],
+                $row['Anio'],
+                $row['Monto_Ventas'],
+                $row['Porcentaje'],
+                $row['Comision'],
+                $row['ID_Empleado'],
+                $row['NombreCompleto'],
+                $row['Cuenta_Contable']
+            );
+            array_push($comisiones, $comision);
         }
+
+        return $comisiones;
     }
 
-    public function insert($poliza) {
-        try {
-            // Extraer los atributos del objeto poliza
-            $fecha = $poliza->getFecha();
-            $descripcion = $poliza->getDescripcion();
-            $monto = $poliza->getMonto();
-            $cuentaContable = $poliza->getCuentaContable();
+    public function getProduccionesByPoliza(int $idPoliza): array {
+        $query = "EXEC BuscarProduccionPorPoliza @ID_Poliza = :idPoliza";
+        $stmt = $this->connection->prepare($query);
 
-            // Definir la consulta SQL usando parámetros posicionales
-            $query = "EXEC InsertarPoliza @Fecha = ?, 
-                                          @Descripción = ?, 
-                                          @Monto = ?, 
-                                          @Cuenta_Contable = ?";
+        $stmt->bindValue(':idPoliza', $idPoliza, PDO::PARAM_INT);
+        $stmt->execute();
 
-            // Preparar la declaración SQL
-            $stmt = $this->connection->prepare($query);
-
-            // Vincular los parámetros
-            $stmt->bindParam(1, $fecha);
-            $stmt->bindParam(2, $descripcion);
-            $stmt->bindParam(3, $monto);
-            $stmt->bindParam(4, $cuentaContable);
-
-            // Ejecutar la declaración y devolver el resultado
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            // Registrar el mensaje de error
-            error_log("Failed to execute insert: " . $e->getMessage());
-            return false;
+        $producciones = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $produccion = new Produccion(
+                $row['ID_Produccion'],
+                $row['Fecha'],
+                $row['Piezas_Elaboradas'],
+                $row['Bonificacion'],
+                $row['ID_Empleado'],
+                $row['NombreCompleto'],
+                $row['Cuenta_Contable']
+            );
+            array_push($producciones, $produccion);
         }
-    }
 
-    public function delete($idPoliza) {
-        try {
-            $stmt = $this->connection->prepare("EXEC BorrarPolizaPorID @ID_Poliza = :ID_Poliza");
-            $stmt->bindParam(':ID_Poliza', $idPoliza, PDO::PARAM_INT);
-            $stmt->execute();
-            return true;
-        } catch (PDOException $e) {
-            error_log("Failed to execute delete: " . $e->getMessage());
-            return false;
-        }
+        return $producciones;
     }
 }
 

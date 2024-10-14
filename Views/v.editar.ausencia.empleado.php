@@ -27,25 +27,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $ausenciaODB->update($idAusencia, $idEmpleado, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento);
 
     if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'La ausencia ha sido modificada correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.empleados.php';
-                }
-            });
-        </script>";
+        header("Location: v.ausencias.php?action=updated");
+        exit();
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al modificar la ausencia.',
-                icon: 'error'
-            });
-        </script>";
+        header("Location: v.ausencias.php?action=error");
+        exit();
     }
 }
 ?>
@@ -58,15 +44,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Editar Ausencia</title>
     <link rel="stylesheet" href="../Styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/dayjs.min.js"></script>
+    <script>
+
+        function validarLongitud(input, maxLength) {
+            if (input.value.length > maxLength) {
+                input.setCustomValidity("Este campo no puede tener más de " + maxLength + " caracteres.");
+            } else {
+                input.setCustomValidity(""); // Restablecer si es válido
+            }
+        }
+
+        // Validar fecha de nacimiento
+        function validarFechaInicio() {
+            var fechaInicio = dayjs(document.getElementById('fecha_inicio').value);
+            var fechaActual = dayjs();
+
+            // Calcular la diferencia en meses
+            var diferenciaMeses = fechaInicio.diff(fechaActual, 'month', true); // true para obtener valores decimales
+
+            if (diferenciaMeses < 0 || diferenciaMeses > 3) {
+                document.getElementById('fecha_inicio').setCustomValidity("La fecha de inicio debe ser dentro de los próximos 3 meses.");
+                return false;
+            } else {
+                document.getElementById('fecha_inicio').setCustomValidity(""); // Restablecer si es válido
+                return true;
+            }
+        }
+
+
+        function validarFechaFin() {
+            var fechaInicio = dayjs(document.getElementById('fecha_inicio').value);
+            var fechaFin = dayjs(document.getElementById('fecha_fin').value);
+
+            var diferenciaDias = fechaFin.diff(fechaInicio, 'day');
+
+            if (diferenciaDias < 0 || diferenciaDias > 15) {
+                document.getElementById('fecha_fin').setCustomValidity("El período no puede superar los 15 días.");
+                return false;
+            } else {
+                document.getElementById('fecha_fin').setCustomValidity(""); // Restablecer si es válido
+                return true;
+            }
+        }
+
+        // Validación del formulario al enviar
+        function validarFormulario() {
+            return validarFechaInicio() && validarFechaFin();
+        }
+    </script>
 </head>
 <body>
 <header>
     <h1>Editar Ausencia</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.ausencias.php">Ausencias</a></li>
+            <li><a href="v.ausencias.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -86,12 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Fecha_Inicio">Fecha de Inicio:</label>
-                <input type="date" id="fecha_inicio" name="Fecha_Inicio" value="<?php echo htmlspecialchars($ausencia->getFechaInicio()); ?>" required>
+                <input type="date" id="fecha_inicio" name="Fecha_Inicio" value="<?php echo htmlspecialchars($ausencia->getFechaInicio()); ?>" required oninput="validarFechaInicio()">
             </div>
 
             <div class="form-group">
                 <label for="Fecha_Fin">Fecha de Fin:</label>
-                <input type="date" id="fecha_fin" name="Fecha_Fin" value="<?php echo htmlspecialchars($ausencia->getFechaFin()); ?>" required>
+                <input type="date" id="fecha_fin" name="Fecha_Fin" value="<?php echo htmlspecialchars($ausencia->getFechaFin()); ?>" required oninput="validarFechaFin()">
             </div>
 
             <div class="form-group">
@@ -101,9 +134,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Descripcion">Descripción:</label>
-                <textarea id="descripcion" name="Descripcion" rows="4" cols="50"><?php echo htmlspecialchars($ausencia->getDescripcion()); ?></textarea>
+                <textarea id="descripcion" name="Descripcion" rows="4" cols="25" required maxlength="100" oninput="validarLongitud(this, 100)" title="La Descripción no puede tener más de 50 caracteres."><?php echo htmlspecialchars($ausencia->getDescripcion()); ?></textarea>
             </div>
-
             <div class="form-group">
                 <label for="Estado">Estado:</label>
                 <select id="estado" name="Estado">

@@ -39,15 +39,56 @@ $historialPagos = $historialODB->getAll();
 <body>
 <header>
     <h1>Gestión de Historial de Pagos</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#" class="active">Historial de Pagos</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="HistorialPagos">
         <div class="search-bar">
@@ -80,9 +121,9 @@ $historialPagos = $historialODB->getAll();
             foreach ($historialPagos as $pago) : ?>
                 <tr>
                     <td><?php echo htmlspecialchars($pago->getFecha()); ?></td>
-                    <td><?php echo htmlspecialchars($pago->getMonto()); ?></td>
+                    <td><?php echo number_format($pago->getMonto(), 2); ?></td>
                     <td><?php echo htmlspecialchars($pago->getNoCuota()); ?></td>
-                    <td><?php echo htmlspecialchars($pago->getSaldoPendiente()); ?></td>
+                    <td><?php echo number_format($pago->getSaldoPendiente(), 2); ?></td>
                     <td><?php echo htmlspecialchars($pago->getNombreCompleto()); ?></td> <!-- Aquí mostramos el nombre completo -->
                     <td>
                         <a href="v.editar.pago.php?ID_Pago=<?php echo $pago->getIdPago(); ?>" class="btn btn-editar">Editar</a>

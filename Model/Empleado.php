@@ -13,7 +13,7 @@ class Empleado {
 
     private $Cuenta_Contable;
 
-    public function __construct($idEmpleado = null, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $departamento, $foto, $activo = 1, $Cuenta_Contable) {
+    public function __construct($idEmpleado = null, $nombre, $apellido, $fechaNacimiento, $fechaContratacion, $salarioBase, $departamento, $foto, $activo = u, $Cuenta_Contable) {
         $this->idEmpleado = $idEmpleado; // Puede ser null
         $this->nombre = $nombre;
         $this->apellido = $apellido;

@@ -45,26 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $horasExtras = new HorasExtras(null, $fechaActual, $horasNormales, $horasDobles, $totalNormal, $totalDoble, $idEmpleado);
             // Llamar al método insert
             $result = $horasExtrasODB->insert($horasExtras);
+
             if ($result) {
-                echo "<script>
-                    Swal.fire({
-                        title: 'Éxito',
-                        text: 'Las horas extras han sido registradas correctamente.',
-                        icon: 'success'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            window.location.href = 'v.horasextras.php';
-                        }
-                    });
-                </script>";
+                header("Location: v.horasextras.php?action=created");
+                exit(); // Termina el script después de la redirección
             } else {
-                echo "<script>
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Hubo un problema al registrar las horas extras.',
-                        icon: 'error'
-                    });
-                </script>";
+                header("Location: v.horasextras.php?action=error");
+                exit();
             }
         }
     }
@@ -85,8 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Registrar Horas Extras</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.horasextras.php">Horas Extras</a></li>
+            <li><a href="v.horasextras.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>

@@ -9,8 +9,9 @@ class HorasExtras
     private $Total_Normal;
     private $Total_Doble;
     private $ID_Empleado;
+    private $NombreCompleto;
 
-    public function __construct($ID_HoraExtra, $Fecha, $Hora_Normal, $Hora_Doble, $Total_Normal, $Total_Doble, $ID_Empleado)
+    public function __construct($ID_HoraExtra, $Fecha, $Hora_Normal, $Hora_Doble, $Total_Normal, $Total_Doble, $ID_Empleado,  $NombreCompleto=null)
     {
         $this->ID_HoraExtra = $ID_HoraExtra;
         $this->Fecha = $Fecha;
@@ -19,6 +20,7 @@ class HorasExtras
         $this->Total_Normal = $Total_Normal;
         $this->Total_Doble = $Total_Doble;
         $this->ID_Empleado = $ID_Empleado;
+        $this->NombreCompleto = $NombreCompleto;
     }
     public function getIDHoraExtra()
     {
@@ -55,6 +57,10 @@ class HorasExtras
         return $this->ID_Empleado;
     }
 
+    public function getNombreCompleto() {
+        return $this->NombreCompleto;
+    }
+
     public function setIDHoraExtra($ID_HoraExtra)
     {
         $this->ID_HoraExtra = $ID_HoraExtra;
@@ -89,4 +95,9 @@ class HorasExtras
     {
         $this->ID_Empleado = $ID_Empleado;
     }
+
+    public function setNombreCompleto($NombreCompleto) {
+        return $this->NombreCompleto = $NombreCompleto;
+    }
+
 }

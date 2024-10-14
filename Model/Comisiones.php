@@ -9,8 +9,10 @@ class Comisiones
     private $porcentaje;
     private $comision;
     private $idEmpleado;
+    private $nombreCompleto;
+    private $cuentaContable;
 
-    public function __construct($ID_Comision, $mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado) {
+    public function __construct($ID_Comision, $mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $nombreCompleto, $cuentaContable) {
         $this->ID_Comision = $ID_Comision;
         $this->mes = $mes;
         $this->anio = $anio;
@@ -18,6 +20,8 @@ class Comisiones
         $this->porcentaje = $porcentaje;
         $this->comision = $comision;
         $this->idEmpleado = $idEmpleado;
+        $this->nombreCompleto = $nombreCompleto;
+        $this->cuentaContable = $cuentaContable;
     }
 
     // Métodos Getters
@@ -49,6 +53,14 @@ class Comisiones
         return $this->idEmpleado;
     }
 
+    public function getNombreCompleto() {
+        return $this->nombreCompleto;
+    }
+
+    public function getCuentaContable() {
+        return $this->cuentaContable;
+    }
+
     // Métodos Setters
     public function setIDComision($ID_Comision) {
         $this->ID_Comision = $ID_Comision;
@@ -76,6 +88,14 @@ class Comisiones
 
     public function setIDEmpleado($idEmpleado) {
         $this->idEmpleado = $idEmpleado;
+    }
+
+    public function setNombreCompleto($nombreCompleto) {
+        return $this->nombreCompleto = $nombreCompleto;
+    }
+
+    public function setCuentaContable($cuentaContable) {
+        return $this->cuentaContable = $cuentaContable;
     }
 }
 

@@ -39,16 +39,56 @@ $horasExtras = $horasExtrasODB->getAll();
 <body>
 <header>
     <h1>Gestión de Horas Extras</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#" class="active">Horas Extras</a></li>
-            <li><a href="v.nueva.horasextras.php">Nueva Hora Extra</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="HorasExtras">
         <h2>Horas Extras Registradas</h2>
@@ -66,7 +106,7 @@ $horasExtras = $horasExtrasODB->getAll();
                 <th>Hora Doble</th>
                 <th>Total Normal</th>
                 <th>Total Doble</th>
-                <th>ID. Empleado</th>
+                <th>Nombre Completo</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -76,9 +116,9 @@ $horasExtras = $horasExtrasODB->getAll();
                     <td><?php echo htmlspecialchars($horaExtra->getFecha()); ?></td>
                     <td><?php echo htmlspecialchars($horaExtra->getHoraNormal()); ?></td>
                     <td><?php echo htmlspecialchars($horaExtra->getHoraDoble()); ?></td>
-                    <td><?php echo htmlspecialchars($horaExtra->getTotalNormal()); ?></td>
-                    <td><?php echo htmlspecialchars($horaExtra->getTotalDoble()); ?></td>
-                    <td><?php echo htmlspecialchars($horaExtra->getIDEmpleado()); ?></td>
+                    <td><?php echo number_format($horaExtra->getTotalNormal(), 2); ?></td>
+                    <td><?php echo number_format($horaExtra->getTotalDoble(), 2); ?></td>
+                    <td><?php echo htmlspecialchars($horaExtra->getNombreCompleto()); ?></td>
                     <td>
                         <a href="v.editar.horasextras.php?ID_HoraExtra=<?php echo $horaExtra->getIDHoraExtra(); ?>" class="btn btn-editar">Editar</a>
                         <button class="btn btn-eliminar" data-id="<?php echo $horaExtra->getIDHoraExtra(); ?>">Eliminar</button>
@@ -87,6 +127,7 @@ $horasExtras = $horasExtrasODB->getAll();
             <?php endforeach; ?>
             </tbody>
         </table>
+        <button class="btn-nuevo">Agregar Nueva Ausencia +</button>
     </section>
 </main>
 
@@ -117,6 +158,14 @@ $horasExtras = $horasExtrasODB->getAll();
             });
         });
     });
+
+    const nuevaAusenciaButton = document.querySelector('.btn-nuevo');
+
+    if (nuevaAusenciaButton) {
+        nuevaAusenciaButton.addEventListener('click', function() {
+            window.location.href = 'v.nueva.horasextras.php';
+        });
+    }
 </script>
 </body>
 

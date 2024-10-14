@@ -49,14 +49,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
 <nav>
     <ul>
         <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
             <a href="#">RRHH</a>
             <ul>
                 <li><a href="v.empleados.php">Empleados</a></li>
                 <li><a href="v.usuarios.php">Usuarios</a></li>
                 <li><a href="v.Expediente.php">Expedientes</a></li>
-                <li><a href="v.familiar.php">Familiares</a></li>
                 <li><a href="v.ausencias.php">Permisos</a></li>
-                <li><a href="#">Evaluaciones</a></li>
             </ul>
         </li>
         <li>
@@ -74,8 +75,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
                 <li><a href="v.horasextras.php">Horas Extras</a></li>
                 <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
                 <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
-                <li><a href="#">Cuentas por Cobrar</a></li>
-                <li><a href="#">Cuentas por Pagar</a></li>
                 <li><a href="#">Reportes Financieros</a></li>
             </ul>
         </li>
@@ -99,25 +98,22 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
 <main>
     <section class="Ausencias">
         <h2>Ausencias Registradas</h2>
-
-        <!-- Mostrar mensaje de éxito -->
         <?php if ($message): ?>
             <div class="alert alert-success"><?php echo htmlspecialchars($message); ?></div>
         <?php endif; ?>
-
         <table>
             <thead>
             <tr>
                 <th>ID Solicitud</th>
-                <th>Fecha Solicitud</th>
-                <th>Fecha Inicio</th>
-                <th>Fecha Fin</th>
+                <th class="text-wrap">Fecha Solicitud</>
+                <th class="text-wrap">Fecha Inicio</>
+                <th class="text-wrap">Fecha Fin</>
                 <th>Motivo</th>
                 <th>Descripción</th>
                 <th>Estado</th>
-                <th>Cuenta Salario</th>
+                <th class="text-wrap">Cuenta Salario</th>
                 <th>Descuento</th>
-                <th>ID Empleado</th>
+                <th>Empleado</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -128,12 +124,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
                     <td><?php echo htmlspecialchars($ausencia->getFechaSolicitud()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getFechaInicio()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getFechaFin()); ?></td>
-                    <td><?php echo htmlspecialchars($ausencia->getMotivo()); ?></td>
-                    <td><?php echo htmlspecialchars($ausencia->getDescripcion()); ?></td> <!-- Mostrar descripción -->
+                    <td class="text-wrap"><?php echo htmlspecialchars($ausencia->getMotivo()); ?></td>
+                    <td class="text-wrap"><?php echo htmlspecialchars($ausencia->getDescripcion()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getEstado()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getCuentaSalario() ? 'Sí' : 'No'); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getDescuento()); ?></td>
-                    <td><?php echo htmlspecialchars($ausencia->getIdEmpleado()); ?></td>
+                    <td <td class="text-wrap"><?php echo htmlspecialchars($ausencia->getNombreCompleto()); ?></td>
                     <td>
                         <div class="botones-acciones">
                             <a href="v.editar.ausencia.empleado.php?ID_Solicitud=<?php echo $ausencia->getIdSolicitud(); ?>" class="btn btn-editar">Editar</a>
@@ -144,7 +140,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
             <?php endforeach; ?>
             </tbody>
         </table>
-        <button class="btn-nuevo">Agregar Nueva Ausencia</button>
+        <button class="btn-nuevo">Agregar Nueva Ausencia +</button>
     </section>
 </main>
 

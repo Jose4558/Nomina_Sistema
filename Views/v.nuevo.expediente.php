@@ -7,31 +7,45 @@ $expedienteODB = new ExpedienteODB();
 $empleadoODB = new EmpleadoODB();
 $empleados = $empleadoODB->getAll();
 
+$idEmpleado = isset($_GET['ID_Empleado']) ? $_GET['ID_Empleado'] : null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tipoDocumento = isset($_POST['Tipo_Documento']) ? $_POST['Tipo_Documento'] : null;
-    $idEmpleado = isset($_POST['ID_Empleado']) ? $_POST['ID_Empleado'] : null;
+    $idEmpleado = $_POST['ID_Empleado'];
     $quitarArchivo = $_POST['QuitarArchivo'] ?? false;  // Verifica si se quiere quitar el archivo
 
-    // Si se quita el archivo, se pasa null para eliminarlo, de lo contrario se procesa el archivo subido
-    $archivo = (!empty($_FILES['Archivo']['tmp_name']) && !$quitarArchivo) ? file_get_contents($_FILES['Archivo']['tmp_name']) : null;
+    // Si se quiere subir un archivo y no se ha marcado quitar el archivo
+    $archivoRuta = null;
+    if (!empty($_FILES['Archivo']['tmp_name']) && !$quitarArchivo) {
+        // Establecer la carpeta donde se guardará el archivo
+        $directorio = '../Expedientes/';
+        $nombreArchivo = basename($_FILES['Archivo']['name']);
+        $archivoRuta = $directorio . uniqid() . '_' . $nombreArchivo;
 
-    // Crear una instancia de Expediente
-    $expediente = new Expediente($tipoDocumento, $idEmpleado, $archivo, $quitarArchivo);
+        // Mover el archivo subido al directorio 'Expedientes'
+        if (move_uploaded_file($_FILES['Archivo']['tmp_name'], $archivoRuta)) {
+            // El archivo fue subido exitosamente
+        } else {
+            echo "<script>Swal.fire('Error', 'No se pudo subir el archivo', 'error');</script>";
+        }
+    }
+
+    // Crear una instancia de Expediente con la ruta del archivo
+    $expediente = new Expediente($tipoDocumento, $idEmpleado, $archivoRuta, $quitarArchivo);
     $expediente->setTipoDocumento($tipoDocumento);
-    $expediente->setArchivo($archivo);
+    $expediente->setArchivo($archivoRuta);  // Guardar la ruta en la base de datos
     $expediente->setIdEmpleado($idEmpleado);
 
     // Llamar al método insert
     $result = $expedienteODB->insert($expediente);
     if ($result) {
-        echo "<script>Swal.fire('Éxito', 'Familiar actualizado correctamente', 'success');</script>";
+        echo "<script>Swal.fire('Éxito', 'Expediente creado correctamente', 'success');</script>";
         header("Location: v.expediente.php"); // Redirigir a otra vista
         exit();
     } else {
-        echo "<script>Swal.fire('Error', 'No se pudo actualizar el familiar', 'error');</script>";
+        echo "<script>Swal.fire('Error', 'No se pudo crear el expediente', 'error');</script>";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -71,20 +85,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <label for="Tipo_Documento">Tipo de Documento:</label>
                 <input type="text" id="tipo_documento" name="Tipo_Documento" required maxlength="50" oninput="validarLongitud(this, 30)" title="El tipo de documento no puede tener más de 30 caracteres.">
             </div>
+            <input type="hidden" name="ID_Empleado" value="<?php echo htmlspecialchars($idEmpleado, ENT_QUOTES, 'UTF-8'); ?>">
             <div class="form-group">
-                <label for="ID_Empleado">Empleado:</label>
-                <select id="id_empleado" name="ID_Empleado" required>
-                    <option value="">Seleccionar...</option>
-                    <?php foreach ($empleados as $empleado) : ?>
-                        <option value="<?php echo $empleado->getIdEmpleado(); ?>">
-                            <?php echo htmlspecialchars($empleado->getNombre() . ' ' . $empleado->getApellido(), ENT_QUOTES, 'UTF-8'); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="Archivo">Archivo:</label>
-                <input type="file" id="archivo" name="Archivo" accept=".pdf, .doc, .docx, .jpg, .jpeg, .png">
+                <label for="Archivo">Archivo (solo PDF):</label>
+                <input type="file" id="archivo" name="Archivo" accept=".pdf">
             </div>
             <div class="form-group form-buttons">
                 <button type="submit" class="btn-submit">Crear Expediente</button>
@@ -99,3 +103,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
+

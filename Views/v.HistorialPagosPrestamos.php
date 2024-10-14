@@ -67,9 +67,9 @@ $historialPagos = $historialODB->getAll();
             <?php foreach ($historialPagos as $pago) : ?>
                 <tr>
                     <td><?php echo htmlspecialchars($pago->getFecha()); ?></td>
-                    <td><?php echo htmlspecialchars($pago->getMonto()); ?></td>
+                    <td><?php echo number_format($pago->getMonto(), 2); ?></td>
                     <td><?php echo htmlspecialchars($pago->getNoCuota()); ?></td>
-                    <td><?php echo htmlspecialchars($pago->getSaldoPendiente()); ?></td>
+                    <td><?php echo number_format($pago->getSaldoPendiente(), 2); ?></td>
                     <td><?php echo htmlspecialchars($pago->getNombreCompleto()); ?></td> <!-- Mostrar Nombre Completo -->
                     <td>
                         <a href="v.editar.pago.php?ID_Pago=<?php echo $pago->getIdPago(); ?>" class="btn btn-editar">Editar</a>

@@ -25,7 +25,8 @@ class HorasExtrasODB {
                 $row['Hora_Doble'],
                 $row['Total_Normal'],
                 $row['Total_Doble'],
-                $row['ID_Empleado']
+                $row['ID_Empleado'],
+                $row['NombreCompleto']
             );
             array_push($horasExtras, $horaExtra);
         }

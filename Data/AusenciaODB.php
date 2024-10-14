@@ -30,7 +30,8 @@ class AusenciaODB {
                 $row['Estado'],
                 $row['Cuenta_Salario'],
                 $row['Descuento'],
-                $row['ID_Empleado']
+                $row['ID_Empleado'],
+                $row['NombreCompleto']
             );
         }
 

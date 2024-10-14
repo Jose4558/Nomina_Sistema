@@ -316,8 +316,8 @@ footer p {
 }
 
 .btn-buscar {
-    background-color: #3085d6;
-    color: white;
+    background-color: #062fd5;
+    color: #f2f4fa;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -386,3 +386,64 @@ footer p {
     font-size: 0.9em;
     display: none; /* Ocultar inicialmente */
 }
+
+/* Estilo inicial para que la imagen se muestre más pequeña */
+#employeePhoto {
+    max-width: 500px; /* Tamaño pequeño */
+    max-height: 500px; /* Tamaño pequeño */
+    transition: transform 0.3s ease; /* Transición suave al agrandarla */
+}
+
+#employeePhoto.large {
+    max-width: 500px; /* Tamaño grande cuando se agranda */
+    max-height: 500px;
+}
+
+#photoModal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#photoModal img {
+    cursor: pointer; /* Cursor de mano para indicar que se puede hacer clic */
+}
+
+#listaArchivos {
+    display: flex;
+    flex-direction: column; /* Organiza los archivos en una columna */
+    gap: 20px; /* Espacio entre cada archivo */
+}
+
+.archivo-container {
+    border: 1px solid #ccc; /* Borde alrededor de cada archivo */
+    padding: 10px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+.acciones {
+    margin-top: 10px; /* Espacio entre el iframe y los botones */
+}
+
+.acciones .btn {
+    margin-right: 20px; /* Espacio entre botones */
+    padding: 5px 10px; /* Tamaño del botón */
+    text-decoration: none; /* Quitar subrayado */
+    color: #fff; /* Color del texto */
+    background-color: #55e657; /* Color de fondo */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor al pasar el mouse */
+}
+
+.acciones .btn.btn-eliminar {
+    background-color: #dc3545; /* Color específico para el botón de eliminar */
+}
+

@@ -9,7 +9,7 @@ $produccionODB = new ProduccionODB();
 if (isset($_GET['ID_Produccion'])) {
     $idProduccion = $_GET['ID_Produccion'];
 
-    // Llamar al método para eliminar la producción en el objeto de acceso a datos
+    // Llamar al método para eliminar la producción
     $produccionODB->borrarProduccion($idProduccion);
 
     // Redirigir con un parámetro de éxito
@@ -18,7 +18,7 @@ if (isset($_GET['ID_Produccion'])) {
 }
 
 // Obtener todas las producciones para mostrar en la tabla
-$producciones = $produccionODB->mostrarProduccion(/* Aquí puedes pasar el ID del empleado si es necesario */);
+$producciones = $produccionODB->mostrarProduccion();
 ?>
 
 <!DOCTYPE html>
@@ -34,40 +34,78 @@ $producciones = $produccionODB->mostrarProduccion(/* Aquí puedes pasar el ID de
 <body>
 <header>
     <h1>Gestión de Producción</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.produccion.php" class="active">Producción</a></li>
-            <li><a href="v.nueva.produccion.php">Nueva Producción</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="Produccion">
         <h2>Producción Registrada</h2>
         <table>
             <thead>
             <tr>
-                <th>ID Producción</th>
                 <th>Fecha</th>
                 <th>Piezas Elaboradas</th>
                 <th>Bonificación</th>
-                <th>Empleado</th>
-                <th>Poliza</th>
+                <th>Nombre del Empleado</th>
+                <th>No. Cuenta</th>
                 <th>Acciones</th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($producciones as $produccion) : ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($produccion->getIDProduccion()); ?></td>
                     <td><?php echo htmlspecialchars($produccion->getFecha()); ?></td>
                     <td><?php echo htmlspecialchars($produccion->getPiezasElaboradas()); ?></td>
-                    <td><?php echo htmlspecialchars($produccion->getBonificacion()); ?></td>
-                    <td><?php echo htmlspecialchars($produccion->getIDEmpleado()); ?></td>
-                    <td><?php echo htmlspecialchars($produccion->getIDPoliza()); ?></td>
+                    <td><?php echo number_format($produccion->getBonificacion(), 2); ?></td>
+                    <td><?php echo htmlspecialchars($produccion->getNombreCompleto()); ?></td>
+                    <td><?php echo htmlspecialchars($produccion->getCuentaContable()); ?></td>
                     <td>
                         <a href="v.editar.produccion.php?ID_Produccion=<?php echo $produccion->getIDProduccion(); ?>" class="btn btn-editar">Editar</a>
                         <button class="btn btn-eliminar" data-id="<?php echo $produccion->getIDProduccion(); ?>">Eliminar</button>
@@ -76,6 +114,7 @@ $producciones = $produccionODB->mostrarProduccion(/* Aquí puedes pasar el ID de
             <?php endforeach; ?>
             </tbody>
         </table>
+        <button class="btn-nuevo">Agregar Nueva Producción +</button>
     </section>
 </main>
 
@@ -106,7 +145,15 @@ $producciones = $produccionODB->mostrarProduccion(/* Aquí puedes pasar el ID de
             });
         });
     });
+
+    const nuevoProduccionButton = document.querySelector('.btn-nuevo');
+
+    if (nuevoProduccionButton) {
+        nuevoProduccionButton.addEventListener('click', function() {
+            window.location.href = 'v.nueva.produccion.php';
+        });
+    }
 </script>
 </body>
-
 </html>
+

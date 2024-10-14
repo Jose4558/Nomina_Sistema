@@ -9,9 +9,6 @@ $polizaContableODB = new PolizaODB();
 if (isset($_GET['ID_Poliza'])) {
     $idPoliza = $_GET['ID_Poliza'];
 
-    // Llamar al método para eliminar la póliza en el objeto de acceso a datos
-    $polizaContableODB->delete($idPoliza);
-
     // Redirigir con un parámetro de éxito
     header('Location: ' . $_SERVER['PHP_SELF'] . '?action=deleted');
     exit();
@@ -20,6 +17,44 @@ if (isset($_GET['ID_Poliza'])) {
 // Obtener todas las pólizas para mostrar en la tabla
 $polizas = $polizaContableODB->getAll();
 
+$descripcion = $poliza->getDescripcion();
+
+if ($idPoliza) {
+    $poliza = $polizaContableODB->getById($idPoliza);
+
+    if (!$poliza) {
+        echo "<script>
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Póliza no encontrada.',
+                    icon: 'error'
+                }).then(() => {
+                    window.location.href = 'v.polizas.php';
+                });
+              </script>";
+        exit;
+    }
+} else {
+    echo "<script>
+            Swal.fire({
+                title: 'Error',
+                text: 'ID de póliza no proporcionado.',
+                icon: 'error'
+            }).then(() => {
+                window.location.href = 'v.polizas.php';
+            });
+          </script>";
+    exit;
+}
+
+if (strpos($descripcion, 'Comisión sobre Ventas') !== false) {
+    $url = "v.editar.poliza.php?ID_Poliza=" . $poliza->getIdPoliza();
+} elseif (strpos($descripcion, 'Bonificación por Producción') !== false) {
+    $url = "PolizaProduccion.php?ID_Poliza=" . $poliza->getIdPoliza();
+} else {
+    // Puedes agregar un manejo por defecto si lo deseas
+    $url = "v.Poliza.php?ID_Poliza=" . $poliza->getIdPoliza(); // O una vista por defecto
+}
 ?>
 
 <!DOCTYPE html>
@@ -35,15 +70,56 @@ $polizas = $polizaContableODB->getAll();
 <body>
 <header>
     <h1>Gestión de Pólizas Contables</h1>
-    <nav>
-        <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="#" class="active">Pólizas</a></li>
-            <li><a href="v.empleados.php">Empleados</a></li>
-        </ul>
-    </nav>
 </header>
-
+<nav>
+    <ul>
+        <li>
+            <a href="index.php">Inicio</a>
+        </li>
+        <li>
+            <a href="#">RRHH</a>
+            <ul>
+                <li><a href="v.empleados.php">Empleados</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
+                <li><a href="v.Expediente.php">Expedientes</a></li>
+                <li><a href="v.ausencias.php">Permisos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Nómina</a>
+            <ul>
+                <li><a href="#">Pagos</a></li>
+                <li><a href="#">Deducciones</a></li>
+                <li><a href="#">Bonificaciones</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Contabilidad</a>
+            <ul>
+                <li><a href="v.Poliza.php">Polizas Contables</a></li>
+                <li><a href="v.horasextras.php">Horas Extras</a></li>
+                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
+                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
+                <li><a href="#">Reportes Financieros</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">BANTRAB</a>
+            <ul>
+                <li><a href="v.prestamo.php">Prestamos</a></li>
+                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
+                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Configuración</a>
+            <ul>
+                <li><a href="#">Ajustes Generales</a></li>
+                <li><a href="#">Seguridad</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
 <main>
     <section class="Polizas">
         <h2>Pólizas Registradas</h2>
@@ -53,7 +129,8 @@ $polizas = $polizaContableODB->getAll();
                 <th>Fecha</th>
                 <th>Descripción</th>
                 <th>Monto</th>
-                <th>Cuenta Contable</th>
+                <th>Nombre del Empleado</th>
+                <th>No. Cuenta</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -62,10 +139,11 @@ $polizas = $polizaContableODB->getAll();
                 <tr>
                     <td><?php echo htmlspecialchars($poliza->getFecha()); ?></td>
                     <td><?php echo htmlspecialchars($poliza->getDescripcion()); ?></td>
-                    <td><?php echo htmlspecialchars($poliza->getMonto()); ?></td>
+                    <td><?php echo number_format($poliza->getMonto(), 2); ?></td>
+                    <td><?php echo htmlspecialchars($poliza->getNombreCompleto()); ?></td>
+                    <td><?php echo htmlspecialchars($poliza->getCuentaContable()); ?></td>
                     <td>
-                        <a href="v.editar.poliza.php?ID_Poliza=<?php echo $poliza->getIdPoliza(); ?>" class="btn btn-editar">Editar</a>
-                        <button class="btn btn-eliminar" data-id="<?php echo $poliza->getIdPoliza(); ?>">Eliminar</button>
+                        <a href="v.editar.poliza.php?ID_Poliza=<?php echo $poliza->getIdPoliza(); ?>" class="btn btn-editar">Ver</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -80,27 +158,7 @@ $polizas = $polizaContableODB->getAll();
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    const deleteButtons = document.querySelectorAll('.btn-eliminar');
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const polizaId = this.getAttribute('data-id');
-
-            Swal.fire({
-                text: "Seguro que quieres eliminar el registro, no podrás revertir esta acción.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = `?ID_Poliza=${polizaId}`;
-                }
-            });
-        });
-    });
 </script>
 </body>
 

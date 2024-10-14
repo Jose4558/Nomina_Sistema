@@ -12,8 +12,10 @@ class Ausencia {
     private $idEmpleado;
     private $descripcion;
 
+    private $NombreCompleto;
+
     // Constructor con los 10 parámetros
-    public function __construct($idSolicitud, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento, $idEmpleado) {
+    public function __construct($idSolicitud, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento, $idEmpleado, $NombreCompleto) {
         $this->idSolicitud = $idSolicitud;
         $this->fechaSolicitud = $fechaSolicitud;
         $this->fechaInicio = $fechaInicio;
@@ -24,6 +26,7 @@ class Ausencia {
         $this->cuentaSalario = $cuentaSalario;
         $this->descuento = $descuento;
         $this->idEmpleado = $idEmpleado;
+        $this->NombreCompleto = $NombreCompleto;
     }
 
     // Métodos getter y setter para todos los atributos
@@ -68,6 +71,10 @@ class Ausencia {
         return $this->descripcion;
     }
 
+    public function getNombreCompleto() {
+        return $this->NombreCompleto;
+    }
+
     public function setIdSolicitud($idSolicitud) {
         $this->idSolicitud = $idSolicitud;
     }
@@ -106,6 +113,10 @@ class Ausencia {
 
     public function setDescripcion($descripcion) {
         $this->descripcion = $descripcion;
+    }
+
+    public function setNombreCompleto() {
+        return $this->NombreCompleto = $NombreCompleto;
     }
 }
 

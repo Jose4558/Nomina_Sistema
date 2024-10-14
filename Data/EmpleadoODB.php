@@ -145,8 +145,9 @@ class EmpleadoODB {
 
     public function insert($empleado) {
         try {
-            $activo = 1;
+            $activo = 1;  // Estado por defecto al insertar un nuevo empleado
 
+            // Obtener los valores del objeto empleado
             $nombre = $empleado->getNombre();
             $apellido = $empleado->getApellido();
             $fechaNacimiento = $empleado->getFechaNacimiento();
@@ -154,29 +155,60 @@ class EmpleadoODB {
             $salarioBase = $empleado->getSalarioBase();
             $deptoID = $empleado->getDepartamento()->getIdDepartamento();
             $foto = $empleado->getFoto() !== null ? $empleado->getFoto() : null;
+            $cuentaContable = $empleado->getCuentaContable();  // El nuevo campo
 
+            // Consulta ajustada para incluir o excluir la foto según corresponda
             if ($foto) {
-                $query = "EXEC InsertarEmpleado ?, ?, ?, ?, ?, ?, CONVERT(varbinary(max), ?), ?";
+                $query = "EXEC InsertarEmpleado 
+                @Nombre = :Nombre, 
+                @Apellido = :Apellido, 
+                @Fecha_Nacimiento = :Fecha_Nacimiento, 
+                @Fecha_Contratacion = :Fecha_Contratacion, 
+                @Salario_Base = :Salario_Base, 
+                @ID_Departamento = :ID_Departamento, 
+                @Foto = :Foto,
+                @Activo = :Activo,
+                @Cuenta_Contable = :Cuenta_Contable";
             } else {
-                $query = "EXEC InsertarEmpleado ?, ?, ?, ?, ?, ?, NULL, ?";
+                $query = "EXEC InsertarEmpleado 
+                @Nombre = :Nombre, 
+                @Apellido = :Apellido, 
+                @Fecha_Nacimiento = :Fecha_Nacimiento, 
+                @Fecha_Contratacion = :Fecha_Contratacion, 
+                @Salario_Base = :Salario_Base, 
+                @ID_Departamento = :ID_Departamento, 
+                @Foto = NULL,
+                @Activo = :Activo,
+                @Cuenta_Contable = :Cuenta_Contable";
             }
 
+            // Preparar la consulta
             $stmt = $this->connection->prepare($query);
+            $stmt->bindParam(':Nombre', $nombre);
+            $stmt->bindParam(':Apellido', $apellido);
+            $stmt->bindParam(':Fecha_Nacimiento', $fechaNacimiento);
+            $stmt->bindParam(':Fecha_Contratacion', $fechaContratacion);
+            $stmt->bindParam(':Salario_Base', $salarioBase);
+            $stmt->bindParam(':ID_Departamento', $deptoID, PDO::PARAM_INT);
+            $stmt->bindParam(':Activo', $activo, PDO::PARAM_BOOL);
+            $stmt->bindParam(':Cuenta_Contable', $cuentaContable);
 
-            $stmt->bindParam(1, $nombre, PDO::PARAM_STR);
-            $stmt->bindParam(2, $apellido, PDO::PARAM_STR);
-            $stmt->bindParam(3, $fechaNacimiento, PDO::PARAM_STR);
-            $stmt->bindParam(4, $fechaContratacion, PDO::PARAM_STR);
-            $stmt->bindParam(5, $salarioBase, PDO::PARAM_STR);
-            $stmt->bindParam(6, $deptoID, PDO::PARAM_INT);
+            // Vincular la foto solo si existe
             if ($foto) {
-                $stmt->bindParam(7, $foto, PDO::PARAM_LOB);
-                $stmt->bindParam(8, $activo, PDO::PARAM_BOOL);
-            } else {
-                $stmt->bindParam(7, $activo, PDO::PARAM_BOOL);
+                $stmt->bindParam(':Foto', $foto, PDO::PARAM_LOB);
             }
 
-            return $stmt->execute();
+            // Ejecutar la consulta
+            $result = $stmt->execute();
+
+            // Verificación de la inserción
+            if ($result) {
+                error_log("Inserción exitosa para el empleado: $nombre $apellido");
+            } else {
+                error_log("Error en la inserción para el empleado: $nombre $apellido");
+            }
+
+            return $result;
         } catch (PDOException $e) {
             error_log("Excepción capturada: " . $e->getMessage());
             return false;

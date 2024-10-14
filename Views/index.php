@@ -21,9 +21,7 @@
                 <li><a href="v.empleados.php">Empleados</a></li>
                 <li><a href="v.usuarios.php">Usuarios</a></li>
                 <li><a href="v.Expediente.php">Expedientes</a></li>
-                <li><a href="v.familiar.php">Familiares</a></li>
                 <li><a href="v.ausencias.php">Permisos</a></li>
-                <li><a href="#">Evaluaciones</a></li>
             </ul>
         </li>
         <li>
@@ -41,8 +39,6 @@
                 <li><a href="v.horasextras.php">Horas Extras</a></li>
                 <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
                 <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
-                <li><a href="#">Cuentas por Cobrar</a></li>
-                <li><a href="#">Cuentas por Pagar</a></li>
                 <li><a href="#">Reportes Financieros</a></li>
             </ul>
         </li>

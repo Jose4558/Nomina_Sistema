@@ -12,34 +12,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $piezasElaboradas = intval($_POST['Piezas_Elaboradas']);
     $idEmpleado = intval($_POST['ID_Empleado']);
     $descripcion = $_POST['Descripcion'];
-    $cuentaContable = $_POST['Cuenta_Contable'];
 
     // Calcular la bonificación basada en las piezas elaboradas
     $bonificacion = $piezasElaboradas * 0.01; // Ejemplo: 1% del total de piezas
+
+    // Obtener la cuenta contable relacionada al empleado
+    $empleadoSeleccionado = $empleadoODB->getById($idEmpleado);
+    $cuentaContable = $empleadoSeleccionado ? $empleadoSeleccionado->getCuentaContable() : '0'; // valor predeterminado si no se encuentra
 
     // Insertar la producción y la póliza
     $result = $produccionODB->insertarProduccionYPoliza($piezasElaboradas, $bonificacion, $idEmpleado, $descripcion, $cuentaContable);
 
     if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'La producción ha sido registrada correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.produccion.php';
-                }
-            });
-        </script>";
+        header("Location: v.produccion.php?action=created");
+        exit(); // Termina el script después de la redirección
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al registrar la producción.',
-                icon: 'error'
-            });
-        </script>";
+        header("Location: v.produccion.php?action=error");
+        exit();
     }
 }
 ?>
@@ -84,12 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group">
                 <label for="Descripcion">Descripción:</label>
-                <textarea id="descripcion" name="Descripcion" required></textarea>
+                <textarea id="descripcion" name="Descripcion" readonly required>Bonificación por Producción.</textarea>
             </div>
-            <div class="form-group">
-                <label for="Cuenta_Contable">Cuenta Contable:</label>
-                <input type="text" id="cuentaContable" name="Cuenta_Contable" required>
-            </div>
+            <input type="hidden" name="Cuenta_Contable" id="cuentaContable" value="0"> <!-- Campo oculto para la cuenta contable -->
             <div class="form-group form-buttons">
                 <button type="submit" class="btn-submit">Registrar Producción</button>
             </div>

@@ -1,16 +1,17 @@
 <?php
 require_once '../Data/PolizaODB.php';
-require_once '../Model/Comisiones.php';
-require_once '../Data/ComisionesODB.php';
+require_once '../Model/Produccion.php';
+require_once '../Data/ProduccionODB.php';
 
+$produccionODB = new ProduccionODB();
 $polizaContableODB = new PolizaODB();
 
 $idPoliza = $_GET['ID_Poliza'] ?? null;
 
 if ($idPoliza) {
     $poliza = $polizaContableODB->getById($idPoliza);
-    // Obtener las comisiones relacionadas con la póliza usando la clase Comisiones
-    $comisiones = $polizaContableODB->getComisionesByPoliza($idPoliza);
+    // Obtener las producciones relacionadas con la póliza usando la clase Produccion
+    $producciones = $produccionODB->getProduccionesByPoliza($idPoliza);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comisiones Relacionadas</title>
+    <title>Producciones Relacionadas</title>
     <link rel="stylesheet" href="../Styles/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -59,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
 <header>
-    <h1>Comisiones Relacionadas</h1>
+    <h1>Producciones Relacionadas</h1>
     <nav>
         <ul>
             <li><a id="regresarButton" href="v.Poliza.php">REGRESAR</a></li>
@@ -79,39 +80,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <span><?php echo htmlspecialchars($poliza->getCuentaContable()); ?></span>
         </div>
 
-        <h2>Comisiones Relacionadas</h2>
-        <?php if (!empty($comisiones)): ?>
-            <?php foreach ($comisiones as $comision): ?>
-                <div class="comision-detalles">
+        <h2>Producciones Relacionadas</h2>
+        <?php if (!empty($producciones)): ?>
+            <?php foreach ($producciones as $produccion): ?>
+                <div class="produccion-detalles">
                     <div class="form-group">
-                        <label><strong>ID Comisión:</strong></label>
-                        <span><?php echo htmlspecialchars($comision->getIDComision()); ?></span>
+                        <label><strong>ID Producción:</strong></label>
+                        <span><?php echo htmlspecialchars($produccion->getIDProduccion()); ?></span>
                     </div>
                     <div class="form-group">
-                        <label><strong>Mes:</strong></label>
-                        <span><?php echo htmlspecialchars($comision->getMes()); ?></span>
+                        <label><strong>Fecha:</strong></label>
+                        <span><?php echo htmlspecialchars($produccion->getFecha()); ?></span>
                     </div>
                     <div class="form-group">
-                        <label><strong>Año:</strong></label>
-                        <span><?php echo htmlspecialchars($comision->getAnio()); ?></span>
+                        <label><strong>Piezas Elaboradas:</strong></label>
+                        <span><?php echo htmlspecialchars($produccion->getPiezasElaboradas()); ?></span>
                     </div>
                     <div class="form-group">
-                        <label><strong>Monto Ventas:</strong></label>
-                        <span><?php echo htmlspecialchars($comision->getMontoVentas()); ?></span>
+                        <label><strong>Bonificación:</strong></label>
+                        <span><?php echo htmlspecialchars($produccion->getBonificacion()); ?></span>
                     </div>
                     <div class="form-group">
-                        <label><strong>Porcentaje:</strong></label>
-                        <span><?php echo htmlspecialchars($comision->getPorcentaje()); ?></span>
+                        <label><strong>ID Empleado:</strong></label>
+                        <span><?php echo htmlspecialchars($produccion->getIDEmpleado()); ?></span>
                     </div>
                     <div class="form-group">
-                        <label><strong>Comisión:</strong></label>
-                        <span><?php echo htmlspecialchars($comision->getComision()); ?></span>
+                        <label><strong>Nombre Completo:</strong></label>
+                        <span><?php echo htmlspecialchars($produccion->getNombreCompleto()); ?></span>
+                    </div>
+                    <div class="form-group">
+                        <label><strong>Cuenta Contable:</strong></label>
+                        <span><?php echo htmlspecialchars($produccion->getCuentaContable()); ?></span>
                     </div>
                 </div>
                 <hr>
             <?php endforeach; ?>
         <?php else: ?>
-            <p>No hay comisiones relacionadas con esta póliza.</p>
+            <p>No hay producciones relacionadas con esta póliza.</p>
         <?php endif; ?>
     </section>
 </main>
@@ -122,3 +127,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
+

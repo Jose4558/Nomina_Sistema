@@ -29,7 +29,9 @@ class ComisionesODB {
                     $row['Monto_Ventas'],
                     $row['Porcentaje'],
                     $row['Comision'],
-                    $row['ID_Empleado']
+                    $row['ID_Empleado'],
+                    $row['NombreCompleto'],
+                    $row['Cuenta_Contable']
                 );
                 $comisiones[] = $comision;
             }
@@ -63,8 +65,8 @@ class ComisionesODB {
 
 
     // Insertar una nueva comisión y póliza
-    public function insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion, $cuentaContable) {
-        $query = "EXEC InsertarComisionYPoliza :Mes, :Anio, :Monto_Ventas, :Porcentaje, :Comision, :ID_Empleado, :Descripcion, :Cuenta_Contable";
+    public function insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion) {
+        $query = "EXEC InsertarComisionYPoliza :Mes, :Anio, :Monto_Ventas, :Porcentaje, :Comision, :ID_Empleado, :Descripcion";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(":Mes", $mes);
         $stmt->bindParam(":Anio", $anio);
@@ -73,14 +75,13 @@ class ComisionesODB {
         $stmt->bindParam(":Comision", $comision);
         $stmt->bindParam(":ID_Empleado", $idEmpleado);
         $stmt->bindParam(":Descripcion", $descripcion);
-        $stmt->bindParam(":Cuenta_Contable", $cuentaContable);
         $stmt->execute();
     }
 
 
     // Modificar una comisión existente
-    public function update($idComision, $mes, $anio, $montoVentas, $porcentaje, $idEmpleado, $descripcion, $cuentaContable) {
-        $query = "EXEC ModificarComisionVentas :ID_Comision, :Mes, :Anio, :Monto_Ventas, :Porcentaje, :ID_Empleado, :Descripcion, :Cuenta_Contable";
+    public function update($idComision, $mes, $anio, $montoVentas, $porcentaje, $idEmpleado, $descripcion) {
+        $query = "EXEC ModificarComisionVentas :ID_Comision, :Mes, :Anio, :Monto_Ventas, :Porcentaje, :ID_Empleado, :Descripcion";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(":ID_Comision", $idComision);
         $stmt->bindParam(":Mes", $mes);
@@ -89,7 +90,6 @@ class ComisionesODB {
         $stmt->bindParam(":Porcentaje", $porcentaje);
         $stmt->bindParam(":ID_Empleado", $idEmpleado);
         $stmt->bindParam(":Descripcion", $descripcion);
-        $stmt->bindParam(":Cuenta_Contable", $cuentaContable);
         $stmt->execute();
     }
 

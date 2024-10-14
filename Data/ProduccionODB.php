@@ -25,7 +25,9 @@ class ProduccionODB {
                 $row['Piezas_Elaboradas'],
                 $row['Bonificacion'],
                 $row['ID_Empleado'],
-                $row['ID_Poliza']
+                $row['ID_Poliza'],
+                $row['NombreCompleto'],
+                $row['Cuenta_Contable']
             );
             array_push($producciones, $produccion);
         }
@@ -48,8 +50,8 @@ class ProduccionODB {
         );
     }
 
-    public function modificarProduccion($idProduccion, $piezasElaboradas, $bonificacion, $idEmpleado, $descripcion, $cuentaContable) {
-        $query = "EXEC ModificarProduccion ?, ?, ?, ?, ?, ?";
+    public function modificarProduccion($idProduccion, $piezasElaboradas, $bonificacion, $idEmpleado, $descripcion) {
+        $query = "EXEC ModificarProduccion ?, ?, ?, ?, ?";
         $stmt = $this->connection->prepare($query);
         // Asignar los parámetros a la consulta
         $stmt->bindParam(1, $idProduccion);          // ID de Producción
@@ -57,21 +59,19 @@ class ProduccionODB {
         $stmt->bindParam(3, $bonificacion);          // Bonificación calculada
         $stmt->bindParam(4, $idEmpleado);            // ID de Empleado
         $stmt->bindParam(5, $descripcion);           // Descripción
-        $stmt->bindParam(6, $cuentaContable);        // Cuenta Contable
 
         // Ejecutar la consulta
         $stmt->execute();
     }
 
 
-    public function insertarProduccionYPoliza($piezasElaboradas, $bonificacion, $idEmpleado, $descripcion, $cuentaContable) {
-        $query = "EXEC InsertarProduccionYPoliza ?, ?, ?, ?, ?";
+    public function insertarProduccionYPoliza($piezasElaboradas, $bonificacion, $idEmpleado, $descripcion) {
+        $query = "EXEC InsertarProduccionYPoliza ?, ?, ?, ?";
         $stmt = $this->connection->prepare($query);
         $stmt->bindParam(1, $piezasElaboradas);
         $stmt->bindParam(2, $bonificacion);
         $stmt->bindParam(3, $idEmpleado);
         $stmt->bindParam(4, $descripcion);
-        $stmt->bindParam(5, $cuentaContable);
         $stmt->execute();
     }
 

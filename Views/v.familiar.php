@@ -70,8 +70,6 @@ $familiares = $familiarODB->buscarFamiliaresPorEmpleado($idEmpleado);
             <a href="#">BANTRAB</a>
             <ul>
                 <li><a href="v.prestamo.php">Prestamos</a></li>
-                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
-                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
             </ul>
         </li>
         <li>

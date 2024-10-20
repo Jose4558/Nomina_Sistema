@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $comision = ($montoVentas * $porcentaje) / 100;
 
     // Insertar la comisión y póliza
-    $result = $comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion, $cuentaContable); // Cambia '0' por la cuenta contable si es necesario.
+    $result = $comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion); // Cambia '0' por la cuenta contable si es necesario.
 
-    if ($comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion, $cuentaContable)) {
+    if ($comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion)) {
         header("Location: v.comisiones.php?action=created");
         exit(); // Termina el script después de la redirección
     } else {

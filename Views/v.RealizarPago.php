@@ -1,41 +1,29 @@
 <?php
+
 require_once '../Data/PolizaODB.php';
 require_once '../Data/PrestamoODB.php';
 require_once '../Model/HistorialPagosPrestamos.php';
 require_once '../Data/HistorialPagosPrestamosODB.php';
 require_once '../Data/EmpleadoODB.php';
 
-// Obtener el ID_Pago enviado desde la URL
-$idPago = $_GET['ID_Pago'] ?? null;
+$idPrestamo = $_GET['ID_Prestamo'] ?? null;
 
-$monto = $noCuota = $saldoPendiente = $nombreEmpleado = $idPoliza = $idPrestamo = $idEmpleado = $cuentaContable = null;
+$monto = $noCuota = $saldoPendiente = $nombreEmpleado = $idPoliza = $idEmpleado = $cuentaContable = null;
 
-// Verificar si se obtuvo el ID_Pago y buscar los datos asociados
-if ($idPago) {
-    $historialPagosODB = new HistorialPagosPrestamosODB();
-    $pago = $historialPagosODB->getIDPago($idPago); // Obtener datos mediante el ID_Pago
+// Verificar si se obtuvo el ID_Prestamo y buscar los datos asociados
+if ($idPrestamo) {
+    $prestamoODB = new PrestamoODB();
+    $prestamo = $prestamoODB->getPagoPorPrestamoId($idPrestamo); // Obtener datos del préstamo mediante el ID_Prestamo
+    if ($prestamo) {
+        $monto = $prestamo->getMonto();
+        $noCuota = $prestamo->getCuotasRestantes();
+        $saldoPendiente = $prestamo->getSaldoPendiente();
+        $idEmpleado = $prestamo->getIdEmpleado();
+        $idPoliza = $prestamo->getIdPoliza();
+        $cuentaContable = $prestamo->getCuentaContable();
 
-    if ($pago) {
-        $monto = $pago->getMonto();
-        $noCuota = $pago->getNoCuota() + 1; // Incrementar el número de cuota
-        $saldoPendiente = $pago->getSaldoPendiente();
-        $idEmpleado = $pago->getIdEmpleado();
-        $idPoliza = $pago->getIdPoliza();
-        $idPrestamo = $pago->getIdPrestamo(); // Obtener ID_Prestamo
-
-        // Obtener nombre del empleado usando ID_Empleado
-        $empleadoODB = new EmpleadoODB();
-        $empleado = $empleadoODB->getById($idEmpleado);
-        if ($empleado) {
-            $nombreEmpleado = $empleado->getNombre() . ' ' . $empleado->getApellido(); // Concatenamos nombre y apellido
-        } else {
-            $nombreEmpleado = 'Empleado no encontrado';
-        }
-
-        // Obtener Cuenta Contable usando ID_Poliza
-        $polizaContableODB = new PolizaODB();
-        $poliza = $polizaContableODB->getById($idPoliza);
-        $cuentaContable = $poliza ? $poliza->getCuentaContable() : '';
+        // Obtener el nombre del empleado
+        $nombreEmpleado = $prestamo->getNombreCompleto(); // Concatenamos nombre y apellido del empleado
     }
 }
 
@@ -46,7 +34,6 @@ $nuevoSaldo = $saldoPendiente - $monto;
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Registrar_Pago'])) {
     $fecha = date('Y-m-d'); // Fecha actual del sistema
 
-    // Asegúrate de inicializar el objeto de HistorialPagosPrestamosODB
     $historialPagosODB = new HistorialPagosPrestamosODB();
 
     // Crear objeto de pago
@@ -57,23 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Registrar_Pago'])) {
     // Verificar si el objeto fue creado correctamente
     if ($nuevoPago) {
         // Insertar el nuevo pago
-        $historialPagosODB->insert($nuevoPago);
-    } else {
-        // Manejar el error si el objeto no se creó correctamente
-        echo "Error al crear el objeto de pago.";
+        $result = $historialPagosODB->insert($nuevoPago);
+        if ($result) {
+            header("Location: v.prestamo.php?action=created");
+            exit(); // Termina el script después de la redirección
+        } else {
+            header("Location: v.prestamo.php?action=error");
+            exit();
+        }
     }
-
-    // Mensaje de confirmación
-    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-    echo '<script>
-            Swal.fire({
-                text: "PAGO REALIZADO CON ÉXITO.",
-                icon: "success",
-                confirmButtonText: "Aceptar"
-            }).then(() => {
-                window.location.href = "v.nuevo.pago.php";
-            });
-          </script>';
 }
 ?>
 
@@ -84,67 +63,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Registrar_Pago'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realizar Pago</title>
     <link rel="stylesheet" href="../Styles/styles.css">
-
 </head>
 <body>
 <header>
     <h1>Realizar Pago</h1>
+    <nav>
+        <ul>
+            <li><a href="v.prestamo.php">REGRESAR</a></li>
+        </ul>
+    </nav>
 </header>
-<nav>
-    <ul>
-        <li>
-            <a href="index.php">Inicio</a>
-        </li>
-        <li>
-            <a href="#">RRHH</a>
-            <ul>
-                <li><a href="v.empleados.php">Empleados</a></li>
-                <li><a href="v.usuarios.php">Usuarios</a></li>
-                <li><a href="v.Expediente.php">Expedientes</a></li>
-                <li><a href="v.ausencias.php">Permisos</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Nómina</a>
-            <ul>
-                <li><a href="#">Pagos</a></li>
-                <li><a href="#">Deducciones</a></li>
-                <li><a href="#">Bonificaciones</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Contabilidad</a>
-            <ul>
-                <li><a href="v.Poliza.php">Polizas Contables</a></li>
-                <li><a href="v.horasextras.php">Horas Extras</a></li>
-                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
-                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
-                <li><a href="#">Reportes Financieros</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">BANTRAB</a>
-            <ul>
-                <li><a href="v.prestamo.php">Prestamos</a></li>
-                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
-                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Configuración</a>
-            <ul>
-                <li><a href="#">Ajustes Generales</a></li>
-                <li><a href="#">Seguridad</a></li>
-            </ul>
-        </li>
-    </ul>
-</nav>
 <main>
-    <form method="POST" action="v.RealizarPago.php">
-        <input type="hidden" name="ID_Pago" value="<?php echo $idPago; ?>">
-
+    <form method="POST" action="v.RealizarPago.php?ID_Prestamo=<?php echo $idPrestamo; ?>">
         <div class="form-group">
-            <label for="No_Cuota">No. Cuota:</label>
+            <label for="No_Cuota">Cuotas Restantes:</label>
             <input type="text" id="No_Cuota" name="No_Cuota" value="<?php echo $noCuota; ?>" readonly>
         </div>
         <div class="form-group">
@@ -163,12 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Registrar_Pago'])) {
             <label for="Nuevo_Saldo">Nuevo Saldo Pendiente:</label>
             <input type="text" id="Nuevo_Saldo" name="Nuevo_Saldo" value="<?php echo $nuevoSaldo; ?>" readonly>
         </div>
-
         <div class="form-group">
             <label for="Cuenta_Contable">Cuenta Contable:</label>
             <input type="text" id="Cuenta_Contable" name="Cuenta_Contable" value="<?php echo htmlspecialchars($cuentaContable); ?>" readonly>
         </div>
-
         <div class="form-group">
             <button type="submit" name="Registrar_Pago" class="btn-submit">Registrar Pago</button>
         </div>
@@ -179,8 +109,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['Registrar_Pago'])) {
 </footer>
 </body>
 </html>
-
-
-
-
-

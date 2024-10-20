@@ -95,7 +95,7 @@ class Produccion
 
     public function setNombreCompleto($NombreCompleto)
     {
-        $this->ID_Poliza = $NombreCompleto;
+        $this->NombreCompleto = $NombreCompleto;
     }
 
     public function setCuentaContable($CuentaContable)

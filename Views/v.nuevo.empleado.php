@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Fecha_Contra">Fecha de Contratación:</label>
-                <input type="date" id="fecha_contra" name="Fecha_Contra" required title="La fecha de contratación no puede ser futura." oninput="validarFechaContratacion()">
+                <input type="date" id="fecha_contra" name="Fecha_Contra" required title="La fecha de contratación no puede ser futura.">
             </div>
 
             <div class="form-group">

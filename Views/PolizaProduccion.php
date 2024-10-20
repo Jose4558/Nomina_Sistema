@@ -20,30 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descripcion = $_POST['Descripción'];
     $monto = $_POST['Monto'];
     $cuentaContable = $_POST['cuenta_Contable'];
-
-    $result = $polizaContableODB->update($idPoliza, $fecha, $descripcion, $monto, $cuentaContable);
-
-    if ($result) {
-        echo "<script>
-            Swal.fire({
-                title: 'Éxito',
-                text: 'La póliza ha sido modificada correctamente.',
-                icon: 'success'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = 'v.polizas.php';
-                }
-            });
-        </script>";
-    } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'Hubo un problema al modificar la póliza.',
-                icon: 'error'
-            });
-        </script>";
-    }
 }
 ?>
 
@@ -103,14 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="form-group">
                         <label><strong>ID Empleado:</strong></label>
                         <span><?php echo htmlspecialchars($produccion->getIDEmpleado()); ?></span>
-                    </div>
-                    <div class="form-group">
-                        <label><strong>Nombre Completo:</strong></label>
-                        <span><?php echo htmlspecialchars($produccion->getNombreCompleto()); ?></span>
-                    </div>
-                    <div class="form-group">
-                        <label><strong>Cuenta Contable:</strong></label>
-                        <span><?php echo htmlspecialchars($produccion->getCuentaContable()); ?></span>
                     </div>
                 </div>
                 <hr>

@@ -16,13 +16,20 @@ class HistorialPagosPrestamosODB
     }
 
     // Obtener todo el historial de pagos
-    public function getAll(): array
+    public function getAllByPrestamoId(int $idPrestamo): array
     {
-        $query = "EXEC MostrarHistorialDePagos";
-        $result = $this->connection->query($query);
+        // Preparamos la consulta para ejecutar el procedimiento almacenado con el parámetro @ID_Prestamo
+        $query = "EXEC MostrarHistorialDePagos @ID_Prestamo = :idPrestamo";
+
+        // Preparamos la consulta con el parámetro
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindParam(':idPrestamo', $idPrestamo, PDO::PARAM_INT);
+        $stmt->execute();
+
         $pagos = [];
 
-        while ($row = $result->fetch()) {
+        // Procesamos el resultado
+        while ($row = $stmt->fetch()) {
             // Crea un nuevo objeto HistorialPagosPrestamos con los datos obtenidos
             $pago = new HistorialPagosPrestamos(
                 $row['ID_Pago'],
@@ -31,69 +38,24 @@ class HistorialPagosPrestamosODB
                 $row['No_cuota'],
                 $row['Saldo_Pendiente'],
                 $row['ID_Poliza'],
-                $row['ID_Prestamos']
+                $row['ID_Prestamos'],
+                $row['NombreCompleto']
             );
-
-            // Asignar el nombre completo
-            $pago->setNombreCompleto($row['NombreCompleto']);
 
             array_push($pagos, $pago);
         }
+
         return $pagos;
     }
 
 
     // Obtener historial de pagos por nombre y apellido del empleado
-    public function getByNombreCompleto($NombreCompleto): array
-    {
-        $query = "EXEC MostrarHistorialDePagosPorNombreYApellidoEmpleado @NombreCompleto = :nombreCompleto";
-    $stmt = $this->connection->prepare($query);
-    $stmt->bindValue(':nombreCompleto', $NombreCompleto);
-    $stmt->execute();
 
-    $pagos = [];
-    while ($row = $stmt->fetch()) {
-        $pago = new HistorialPagosPrestamos(
-            $row['ID_Pago'],
-            $row['Fecha'],
-            $row['Monto'],
-            $row['No_cuota'],
-            $row['Saldo_Pendiente'],
-            $row['ID_Empleado'],
-            $row['ID_Poliza'],
-            $row['ID_Prestamos']
-        );
-        $pago->setNombreCompleto($row['NombreCompleto']); // Guardar el nombre completo
-        array_push($pagos, $pago);
-    }
-    return $pagos;
-    }
-
-    // Obtener un historial de pago por ID
-    public function getIDPago($id)
-    {
-        $query = "EXEC ObtenerHistorialDePagoPorID @ID_Pago = ?";
-        $stmt = $this->connection->prepare($query);
-        $stmt->bindParam(1, $id);
-        $stmt->execute();
-        $row = $stmt->fetch();
-
-        return new HistorialPagosPrestamos(
-            $row['ID_Pago'],
-            $row['Fecha'],
-            $row['Monto'],
-            $row['No_cuota'],
-            $row['Saldo_Pendiente'],
-            $row['ID_Empleado'],
-            $row['ID_Poliza'],
-            $row['ID_Prestamos']
-        );
-    }
 
     // Insertar un nuevo pago y actualizar el préstamo
     public function insert($pago)
     {
-        $query = "EXEC InsertarHistorialYActualizarPrestamo @Fecha = ?, @Monto = ?, @No_cuota = ?, @Saldo_Pendiente = ?, @ID_Empleado = ?, @ID_Poliza = ?, @ID_Prestamos = ?, @Cuenta_Contable = ?";
+        $query = "EXEC InsertarHistorialYActualizarPrestamo @Fecha = ?, @Monto = ?, @No_cuota = ?, @Saldo_Pendiente = ?, @ID_Empleado = ?, @ID_Poliza = ?, @ID_Prestamos = ?";
         $stmt = $this->connection->prepare($query);
 
         $fecha = $pago->getFecha(); // Fecha automática
@@ -103,8 +65,8 @@ class HistorialPagosPrestamosODB
         $idEmpleado = $pago->getIdEmpleado(); // No modificable
         $idPoliza = $pago->getIdPoliza(); // No modificable
         $idPrestamo = $pago->getIdPrestamo();
-        $cuentaContable = $pago->getCuentaContable(); // Obtenido de Poliza por ID
 
+        // Bind de los parámetros con los valores del objeto
         $stmt->bindParam(1, $fecha);
         $stmt->bindParam(2, $monto);
         $stmt->bindParam(3, $noCuota);
@@ -112,45 +74,10 @@ class HistorialPagosPrestamosODB
         $stmt->bindParam(5, $idEmpleado);
         $stmt->bindParam(6, $idPoliza);
         $stmt->bindParam(7, $idPrestamo);
-        $stmt->bindParam(8, $cuentaContable);
 
+        // Ejecuta la consulta
         $stmt->execute();
     }
 
-    // Modificar un historial de pago y actualizar el préstamo
-    public function update($pago)
-    {
-        $query = "EXEC ModificarHistorialYActualizarPrestamo @ID_Pago = ?, @Fecha = ?, @Monto = ?, @No_cuota = ?, @Saldo_Pendiente = ?, @ID_Empleado = ?, @ID_Poliza = ?, @ID_Prestamos = ?";
-        $stmt = $this->connection->prepare($query);
-
-        $idPago = $pago->getIdPago();
-        $fecha = $pago->getFecha();
-        $monto = $pago->getMonto();
-        $noCuota = $pago->getNoCuota();
-        $saldoPendiente = $pago->getSaldoPendiente();
-        $idEmpleado = $pago->getIdEmpleado();
-        $idPoliza = $pago->getIdPoliza();
-        $idPrestamo = $pago->getIdPrestamo();
-
-        $stmt->bindParam(1, $idPago);
-        $stmt->bindParam(2, $fecha);
-        $stmt->bindParam(3, $monto);
-        $stmt->bindParam(4, $noCuota);
-        $stmt->bindParam(5, $saldoPendiente);
-        $stmt->bindParam(6, $idEmpleado);
-        $stmt->bindParam(7, $idPoliza);
-        $stmt->bindParam(8, $idPrestamo);
-
-        $stmt->execute();
-    }
-
-    // Eliminar un historial de pago y actualizar el préstamo
-    public function delete($idPago)
-    {
-        $query = "EXEC EliminarHistorialYActualizarPrestamo @ID_Pago = ?";
-        $stmt = $this->connection->prepare($query);
-        $stmt->bindParam(1, $idPago);
-        $stmt->execute();
-    }
 }
 

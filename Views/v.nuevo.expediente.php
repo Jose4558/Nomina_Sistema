@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form id="expedienteForm" action="v.nuevo.expediente.php" method="POST" enctype="multipart/form-data" class="form-crear-editar">
             <div class="form-group">
                 <label for="Tipo_Documento">Tipo de Documento:</label>
-                <input type="text" id="tipo_documento" name="Tipo_Documento" required maxlength="50" oninput="validarLongitud(this, 30)" title="El tipo de documento no puede tener más de 30 caracteres.">
+                <input type="text" id="tipo_documento" name="Tipo_Documento" required maxlength="30" oninput="validarLongitud(this, 30)" title="El tipo de documento no puede tener más de 30 caracteres.">
             </div>
             <input type="hidden" name="ID_Empleado" value="<?php echo htmlspecialchars($idEmpleado, ENT_QUOTES, 'UTF-8'); ?>">
             <div class="form-group">

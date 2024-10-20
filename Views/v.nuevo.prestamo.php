@@ -16,10 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $saldoPendiente = trim($_POST['Saldo_Pendiente']);
     $cancelado = isset($_POST['Cancelado']) ? 1 : 0; // Si está marcado, valor es 1
     $idEmpleado = intval($_POST['ID_Empleado']);
-    $cuentaContable = trim($_POST['Cuenta_Contable']);
 
     // Validación en el servidor
-    if (empty($monto) || empty($cuotas) || empty($fechaInicio) || empty($cuotasRestantes) || empty($saldoPendiente) || empty($idEmpleado) || empty($cuentaContable)) {
+    if (empty($monto) || empty($cuotas) || empty($fechaInicio) || empty($cuotasRestantes) || empty($saldoPendiente) || empty($idEmpleado)) {
         echo "<script>
             Swal.fire({
                 title: 'Error',
@@ -29,30 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </script>";
     } else {
         // Crear un objeto Prestamo
-        $prestamo = new Prestamo(null, $monto, $cuotas, $fechaInicio, $cuotasRestantes, $saldoPendiente, $cancelado, $idEmpleado, $cuentaContable);
+        $prestamo = new Prestamo(null, $monto, $cuotas, $fechaInicio, $cuotasRestantes, $saldoPendiente, $cancelado, $idEmpleado);
 
         // Llamada al método de inserción
-        $result = $prestamoODB->insert($prestamo, $cuentaContable);
+        $result = $prestamoODB->insert($prestamo);
+
         if ($result) {
-            echo "<script>
-                Swal.fire({
-                    title: 'Éxito',
-                    text: 'El préstamo ha sido creado correctamente.',
-                    icon: 'success'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = 'v.prestamos.php';
-                    }
-                });
-            </script>";
+            header("Location: v.prestamo.php?action=created");
+            exit(); // Termina el script después de la redirección
         } else {
-            echo "<script>
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Hubo un problema al crear el préstamo.',
-                    icon: 'error'
-                });
-            </script>";
+            header("Location: v.prestamo.php?action=error");
+            exit();
         }
     }
 }
@@ -85,8 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Registrar Préstamo</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
-            <li><a href="v.prestamo.php">Préstamos</a></li>
+            <li><a href="v.prestamo.php">REGRESAR</a></li>
         </ul>
     </nav>
 </header>
@@ -122,10 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </option>
                     <?php endforeach; ?>
                 </select>
-            </div>
-            <div class="form-group">
-                <label for="Cuenta_Contable">Cuenta Contable:</label>
-                <input type="text" id="cuentaContable" name="Cuenta_Contable" required>
             </div>
             <div class="form-group form-buttons">
                 <button type="submit" class="btn-submit">Crear Préstamo</button>

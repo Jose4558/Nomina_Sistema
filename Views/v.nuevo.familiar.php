@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             fechaMinima.setFullYear(fechaActual.getFullYear() - 100);
 
             var fechaMaxima = new Date();
-            fechaMaxima.setFullYear(fechaActual.getFullYear() - 18);
+            fechaMaxima.setFullYear(fechaActual.getFullYear() - 1);
 
             if (fechaNacimiento < fechaMinima || fechaNacimiento > fechaMaxima) {
                 document.getElementById('fechaNacimiento').setCustomValidity("Debe ser mayor de 18 años y menor de 100.");

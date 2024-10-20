@@ -81,5 +81,29 @@ class ProduccionODB {
         $stmt->bindParam(1, $idProduccion);
         $stmt->execute();
     }
+
+    public function getProduccionesByPoliza(int $idPoliza): array {
+        $query = "EXEC BuscarProduccionPorPoliza @ID_Poliza = :idPoliza";
+        $stmt = $this->connection->prepare($query);
+
+        $stmt->bindValue(':idPoliza', $idPoliza, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $producciones = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $produccion = new Produccion(
+                $row['ID_Produccion'],
+                $row['Fecha'],
+                $row['Piezas_Elaboradas'],
+                $row['Bonificacion'],
+                $row['ID_Empleado'],
+                $row['NombreCompleto'],
+                $row['Cuenta_Contable']
+            );
+            array_push($producciones, $produccion);
+        }
+
+        return $producciones;
+    }
 }
 ?>

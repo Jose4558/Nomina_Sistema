@@ -10,7 +10,8 @@ class Prestamo {
     private $cancelado;
     private $idEmpleado;
     private $idPoliza;
-    private $cuentaContable;
+    private $CuentaContable;
+    private $NombreCompleto;
 
     // Constructor con los parámetros correspondientes
     public function __construct($idPrestamo = null,
@@ -22,7 +23,9 @@ class Prestamo {
                                 $cancelado = 0,
                                 $idEmpleado = null,
                                 $idPoliza = null,
-                                $cuentaContable = null) {
+                                $NombreCompleto=null,
+                                $CuentaContable = null
+                                ) {
         $this->idPrestamo = $idPrestamo;
         $this->monto = $monto;
         $this->cuotas = $cuotas;
@@ -32,7 +35,9 @@ class Prestamo {
         $this->cancelado = $cancelado;
         $this->idEmpleado = $idEmpleado;
         $this->idPoliza = $idPoliza;
-        $this->cuentaContable = $cuentaContable;
+        $this->NombreCompleto = $NombreCompleto;
+        $this->CuentaContable = $CuentaContable;
+
     }
 
     // Métodos getter y setter para cada atributo
@@ -73,6 +78,14 @@ class Prestamo {
         return $this->idPoliza;
     }
 
+    public function getCuentaContable() {
+        return $this->CuentaContable;
+    }
+
+    public function getNombreCompleto() {
+        return $this->NombreCompleto;
+    }
+
     public function setIdPrestamo($idPrestamo) {
         $this->idPrestamo = $idPrestamo;
     }
@@ -107,6 +120,14 @@ class Prestamo {
 
     public function setIdPoliza($idPoliza) {
         $this->idPoliza = $idPoliza;
+    }
+
+    public function setCuentaContable($CuentaContable) {
+        $this->CuentaContable = $CuentaContable;
+    }
+
+    public function setNombreCompleto($NombreCompleto) {
+        $this->NombreCompleto = $NombreCompleto;
     }
 }
 

@@ -4,25 +4,22 @@ require_once '../Model/Poliza.php';
 require_once '../Data/PolizaODB.php';
 
 $polizaContableODB = new PolizaODB();
-
-// Verificar si se ha enviado un ID_Poliza para eliminar
-if (isset($_GET['ID_Poliza'])) {
-    $idPoliza = $_GET['ID_Poliza'];
-
-    // Redirigir con un parámetro de éxito
-    header('Location: ' . $_SERVER['PHP_SELF'] . '?action=deleted');
-    exit();
-}
+$idPoliza = $_GET['ID_Poliza'] ?? null; // Verifica que este valor sea correcto
 
 // Obtener todas las pólizas para mostrar en la tabla
 $polizas = $polizaContableODB->getAll();
 
-$descripcion = $poliza->getDescripcion();
+$poliza = null;
+$descripcion = '';
+
 
 if ($idPoliza) {
     $poliza = $polizaContableODB->getById($idPoliza);
 
-    if (!$poliza) {
+    if ($poliza) {
+        $descripcion = $poliza->getDescripcion(); // Solo accede si la póliza no es null
+    } else {
+        // Manejo de error si la póliza no fue encontrada
         echo "<script>
                 Swal.fire({
                     title: 'Error',
@@ -34,26 +31,6 @@ if ($idPoliza) {
               </script>";
         exit;
     }
-} else {
-    echo "<script>
-            Swal.fire({
-                title: 'Error',
-                text: 'ID de póliza no proporcionado.',
-                icon: 'error'
-            }).then(() => {
-                window.location.href = 'v.polizas.php';
-            });
-          </script>";
-    exit;
-}
-
-if (strpos($descripcion, 'Comisión sobre Ventas') !== false) {
-    $url = "v.editar.poliza.php?ID_Poliza=" . $poliza->getIdPoliza();
-} elseif (strpos($descripcion, 'Bonificación por Producción') !== false) {
-    $url = "PolizaProduccion.php?ID_Poliza=" . $poliza->getIdPoliza();
-} else {
-    // Puedes agregar un manejo por defecto si lo deseas
-    $url = "v.Poliza.php?ID_Poliza=" . $poliza->getIdPoliza(); // O una vista por defecto
 }
 ?>
 
@@ -107,8 +84,6 @@ if (strpos($descripcion, 'Comisión sobre Ventas') !== false) {
             <a href="#">BANTRAB</a>
             <ul>
                 <li><a href="v.prestamo.php">Prestamos</a></li>
-                <li><a href="v.HistorialPagosPrestamos.php">Pagos de Prestamos</a></li>
-                <li><a href="v.PagosPrestamosEmpleados.php">Pagos de Prestamos por Empleado</a></li>
             </ul>
         </li>
         <li>
@@ -143,7 +118,14 @@ if (strpos($descripcion, 'Comisión sobre Ventas') !== false) {
                     <td><?php echo htmlspecialchars($poliza->getNombreCompleto()); ?></td>
                     <td><?php echo htmlspecialchars($poliza->getCuentaContable()); ?></td>
                     <td>
-                        <a href="v.editar.poliza.php?ID_Poliza=<?php echo $poliza->getIdPoliza(); ?>" class="btn btn-editar">Ver</a>
+                        <a href="<?php
+                        if (strpos($poliza->getDescripcion(), 'Comisión Sobre Ventas') !== false) {
+                            echo "v.editar.poliza.php?ID_Poliza=" . $poliza->getIdPoliza();
+                        } elseif (strpos($poliza->getDescripcion(), 'Bonificación por Producción') !== false) {
+                            echo "PolizaProduccion.php?ID_Poliza=" . $poliza->getIdPoliza();
+                        }
+                        ?>" class="btn btn-editar">Ver</a>
+
                     </td>
                 </tr>
             <?php endforeach; ?>

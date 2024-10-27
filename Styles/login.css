@@ -1,31 +1,120 @@
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
+* {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #04bff6; /* Color de fondo para mejor contraste */
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.login-container {
-    text-align: center; /* Centrar el texto dentro del contenedor */
-    background-color: white; /* Fondo blanco */
-    border: 1px solid #ccc;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px; /* Ancho fijo para el contenedor */
+body, html {
+    height: 100%;
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrar contenido dentro del contenedor */
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    overflow: hidden; /* Evita el desplazamiento durante la animación */
 }
 
+body {
+    background-image: url('../Imagenes/Empresa2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Estilo para el aside */
+.login-aside {
+    position: fixed; /* Fijo para que cubra toda la pantalla */
+    top: 0;
+    left: -300px; /* Comienza fuera de la pantalla */
+    width: 300px; /* Ancho del aside */
+    height: 100%; /* Alto completo */
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo transparente */
+    color: white;
+    padding: 20px;
+    transition: left 0.3s ease; /* Transición suave */
+    z-index: 1000; /* Asegura que esté sobre otros elementos */
+}
+
+/* Activo cuando se muestra el aside */
+.login-aside.active {
+    left: 0; /* Mueve el aside a la vista */
+}
+
+/* Fondo animado debajo del texto */
+.content {
+    text-align: center;
+    color: white;
+    position: relative; /* Necesario para posicionar el pseudo-elemento */
+    padding: 20px;
+    z-index: 1;
+    opacity: 0; /* Comienza invisible */
+    animation: slideToCenter 1s ease-out forwards;
+}
+
+/* Pseudo-elemento para el fondo */
+.content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2); /* Fondo semitransparente */
+    border-radius: 8px;
+    transform: scale(0.9); /* Tamaño del cuadro ligeramente más pequeño que el contenido */
+    z-index: -1; /* Asegura que esté detrás del texto */
+    opacity: 0;
+    animation: slideToCenter 1s ease-out forwards;
+}
+
+/* Animación para que el contenido se desplace hasta el centro */
+@keyframes slideToCenter {
+    from {
+        transform: translateY(-100vh); /* Comienza fuera de la pantalla */
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0); /* Termina en el centro */
+        opacity: 1;
+    }
+}
+
+.top-right-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
+    color: white;
+    background-color: #ff5555;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    animation: bounceIn 1.2s ease;
+}
+
+.top-right-button:hover {
+    background-color: #ff3333;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    50% {
+        transform: translateY(10px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Estilo del formulario */
 .form-group {
     margin-bottom: 15px;
-    text-align: left; /* Alinear labels a la izquierda */
-    width: 100%; /* Para que ocupen el ancho completo */
 }
 
 input {

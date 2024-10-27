@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once '../Data/UsuarioODB.php';
-require_once '../Model/Usuario.php';
+require_once 'Data/UsuarioODB.php';
+require_once 'Model/Usuario.php';
 
 $error = '';
 
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_id'] = $usuarioAutenticado->getidUsuario();
             $_SESSION['usuario_nombre'] = $usuarioAutenticado->getCorreo();
             $_SESSION['rol'] = $usuarioAutenticado->getIdRol();
-            header("Location: indexAdmon.php");
+            header("Location: Views/indexAdmon.php");
             exit();
         } else {
             $error = "Usuario o contraseña incorrectos.";
@@ -28,44 +28,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
-    <link rel="stylesheet" href="../Styles/login.css">
+    <title>Página Principal</title>
+    <link rel="stylesheet" href="Styles/login.css">
     <script>
-        function validarSinCaracteresEspeciales(input) {
-            const regex = /^[a-zA-Z0-9]*$/;
-            if (!regex.test(input.value)) {
-                input.setCustomValidity("No se permiten caracteres especiales.");
-            } else {
-                input.setCustomValidity("");
-            }
+        // Función para mostrar u ocultar el aside de inicio de sesión
+        function toggleLoginAside() {
+            const loginAside = document.querySelector('.login-aside');
+            loginAside.classList.toggle('active');
         }
     </script>
 </head>
 <body>
-<div class="login-container">
+<button class="top-right-button" onclick="toggleLoginAside()">INICIAR SESIÓN</button>
+<div class="square"></div>
+<div class="content">
+    <h1>Bienvenido a TConsulting</h1>
+    <p>Tu Solución en Gestión de nómina</p>
+</div>
+
+<!-- Aside para el formulario de inicio de sesión -->
+<aside class="login-aside">
     <h2>Iniciar Sesión</h2>
-
-    <?php if (!empty($error)): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+    <?php if ($error): ?>
+        <div class="error-message"><?php echo $error; ?></div>
     <?php endif; ?>
-
-    <form action="" method="POST">
+    <form action="" method="POST"> <!-- Cambia aquí para que apunte a la misma página -->
         <div class="form-group">
             <label for="usuario">Usuario:</label>
-            <input type="text" id="usuario" name="usuario" required pattern="[a-zA-Z0-9]*" oninput="validarSinCaracteresEspeciales(this)">
+            <input type="text" id="usuario" name="usuario" required pattern="[a-zA-Z0-9]*">
         </div>
         <div class="form-group">
             <label for="password">Contraseña:</label>
-            <input type="password" id="password" name="password" required pattern="[a-zA-Z0-9]*" oninput="validarSinCaracteresEspeciales(this)">
+            <input type="password" id="password" name="password" required pattern="[a-zA-Z0-9]*">
         </div>
         <button type="submit">Iniciar Sesión</button>
     </form>
-</div>
+</aside>
 </body>
 </html>
+
+
+

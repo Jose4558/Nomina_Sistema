@@ -21,7 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $estado = null;
     $descuento = null;
 
-    $ausencia = new Ausencia(null, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento, $idEmpleado);
+    $ausencia = new Ausencia(null, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento, $idEmpleado, $NombreCompleto = null
+    );
 
     $ausenciaODB = new AusenciaODB();
 
@@ -61,10 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             var fechaInicio = dayjs(document.getElementById('fecha_inicio').value);
             var fechaActual = dayjs();
 
+            // Verificar si la fecha de inicio es anterior a la fecha actual
+            if (fechaInicio.isBefore(fechaActual, 'day')) {
+                document.getElementById('fecha_inicio').setCustomValidity("La fecha de inicio no puede ser anterior a la fecha actual.");
+                return false;
+            }
+
             // Calcular la diferencia en meses
             var diferenciaMeses = fechaInicio.diff(fechaActual, 'month', true); // true para obtener valores decimales
 
-            if (diferenciaMeses < 0 || diferenciaMeses > 3) {
+            if (diferenciaMeses > 3) {
                 document.getElementById('fecha_inicio').setCustomValidity("La fecha de inicio debe ser dentro de los próximos 3 meses.");
                 return false;
             } else {
@@ -74,20 +81,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
 
+
         function validarFechaFin() {
             var fechaInicio = dayjs(document.getElementById('fecha_inicio').value);
             var fechaFin = dayjs(document.getElementById('fecha_fin').value);
+            var motivo = document.getElementById('motivo').value;
 
+            // Definir los límites de días según el motivo
+            var limitesDias = {
+                "Enfermedad": 10,
+                "Cita Medica": 1,
+                "Vacaciones": 15,
+                "Dia Personal": 5,
+                "Accidente": 30,
+                "Permiso Familiar": 7,
+                "Otro": 5
+            };
+
+            // Obtener el límite de días correspondiente al motivo seleccionado
+            var limiteDias = limitesDias[motivo] || 15; // Por defecto, 15 días si no hay motivo válido
+
+            // Verificar si la fecha de fin es anterior a la fecha de inicio
+            if (fechaFin.isBefore(fechaInicio, 'day')) {
+                document.getElementById('fecha_fin').setCustomValidity("La fecha de fin no puede ser anterior a la fecha de inicio.");
+                return false;
+            }
+
+            // Calcular la diferencia en días
             var diferenciaDias = fechaFin.diff(fechaInicio, 'day');
 
-            if (diferenciaDias < 0 || diferenciaDias > 15) {
-                document.getElementById('fecha_fin').setCustomValidity("El período no puede superar los 15 días.");
+            if (diferenciaDias > limiteDias) {
+                document.getElementById('fecha_fin').setCustomValidity("El período no puede superar los " + limiteDias + " días para el motivo seleccionado.");
                 return false;
             } else {
                 document.getElementById('fecha_fin').setCustomValidity(""); // Restablecer si es válido
                 return true;
             }
         }
+
 
         // Validación del formulario al enviar
         function validarFormulario() {
@@ -140,7 +171,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Motivo">Motivo:</label>
-                <input type="text" id="motivo" name="Motivo" required>
+                <select id="motivo" name="Motivo" required>
+                    <option value="" disabled selected>Seleccione un motivo</option>
+                    <option value="Enfermedad">Enfermedad</option>
+                    <option value="Cita Medica">Cita Médica</option>
+                    <option value="Vacaciones">Vacaciones</option>
+                    <option value="Dia Personal">Día Personal</option>
+                    <option value="Accidente">Accidente</option>
+                    <option value="Permiso Familiar">Permiso Familiar</option>
+                    <option value="Otro">Otro (Puede colocar el motivo en la descripción.)</option>
+                </select>
             </div>
 
             <div class="form-group">

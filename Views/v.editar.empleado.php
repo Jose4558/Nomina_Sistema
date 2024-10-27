@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Salario_Base">Salario Base:</label>
-                <input type="number" id="salario_base" name="Salario_Base" value="<?php echo htmlspecialchars($empleado->getSalarioBase()); ?>" required>
+                <input type="number" id="salario_base" name="Salario_Base" value="<?php echo htmlspecialchars($empleado->getSalarioBase()); ?>" required min="1000" step="0.01">
             </div>
             <div class="form-group">
                 <label for="Depto_ID">Departamento:</label>
@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group">
                 <label for="Cuenta_Contable">Cuenta Contable:</label>
-                <input type="text" id="cuentaContable" name="Cuenta_Contable" value="<?php echo htmlspecialchars($empleado->getCuentaContable()); ?>" required>
+                <input type="text" id="cuentaContable" name="Cuenta_Contable" value="<?php echo htmlspecialchars($empleado->getCuentaContable());?>" required oninput="validarNumeros(this)">
             </div>
             <input type="hidden" name="FotoActual" value="<?php echo htmlspecialchars($empleado->getFoto()); ?>">
             <div class="form-group">

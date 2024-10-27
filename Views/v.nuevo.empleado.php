@@ -21,6 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $carpeta = '../Imagenes';
     $rutaFoto = $carpeta . '/' . basename($nombreFoto);
 
+    if ($salarioBase < 0) {
+        echo "El salario base no puede ser un valor negativo.";
+    }
+
     if (!empty($nombreFoto)) {
         if (move_uploaded_file($temporal, $rutaFoto)) {
             $foto = $rutaFoto;
@@ -144,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Salario_Base">Salario Base:</label>
-                <input type="number" id="salario_base" name="Salario_Base" required>
+                <input type="number" id="salario_base" name="Salario_Base" required min="1000" step="0.01">
             </div>
 
             <div class="form-group">
@@ -161,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Cuenta_Contable">Cuenta Contable:</label>
-                <input type="text" name="Cuenta_Contable" id="Cuenta_Contable" required />
+                <input type="text" name="Cuenta_Contable" id="Cuenta_Contable" required oninput="validarNumeros(this)"/>
             </div>
 
             <div class="form-group">

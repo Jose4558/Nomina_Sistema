@@ -15,7 +15,7 @@ class Ausencia {
     private $NombreCompleto;
 
     // Constructor con los 10 parámetros
-    public function __construct($idSolicitud, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento, $idEmpleado, $NombreCompleto) {
+    public function __construct($idSolicitud=null, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento, $idEmpleado, $NombreCompleto=null) {
         $this->idSolicitud = $idSolicitud;
         $this->fechaSolicitud = $fechaSolicitud;
         $this->fechaInicio = $fechaInicio;
@@ -115,7 +115,7 @@ class Ausencia {
         $this->descripcion = $descripcion;
     }
 
-    public function setNombreCompleto() {
+    public function setNombreCompleto($NombreCompleto) {
         return $this->NombreCompleto = $NombreCompleto;
     }
 }

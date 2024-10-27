@@ -30,7 +30,7 @@ $primerPago = !empty($historialPagos) ? $historialPagos[0] : null;
     <h1>Gestión de Historial de Pagos</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
+            <li><a href="indexAdmon.php">Inicio</a></li>
             <li><a href="#" class="active">Historial de Pagos</a></li>
             <li><a href="v.empleados.php">Empleados</a></li>
         </ul>

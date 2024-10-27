@@ -54,9 +54,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['ID_Ex
 <nav>
     <ul>
         <li>
-            <a href="index.php">Inicio</a>
-        </li>
-        <li>
             <a href="#">RRHH</a>
             <ul>
                 <li><a href="v.empleados.php">Empleados</a></li>
@@ -87,6 +84,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['ID_Ex
             <a href="#">BANTRAB</a>
             <ul>
                 <li><a href="v.prestamo.php">Prestamos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Tienda</a>
+            <ul>
+                <li><a href="v.tienda.php">Registro de Tienda</a></li>
             </ul>
         </li>
         <li>

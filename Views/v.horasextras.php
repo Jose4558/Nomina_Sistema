@@ -43,9 +43,6 @@ $horasExtras = $horasExtrasODB->getAll();
 <nav>
     <ul>
         <li>
-            <a href="index.php">Inicio</a>
-        </li>
-        <li>
             <a href="#">RRHH</a>
             <ul>
                 <li><a href="v.empleados.php">Empleados</a></li>
@@ -76,6 +73,12 @@ $horasExtras = $horasExtrasODB->getAll();
             <a href="#">BANTRAB</a>
             <ul>
                 <li><a href="v.prestamo.php">Prestamos</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#">Tienda</a>
+            <ul>
+                <li><a href="v.tienda.php">Registro de Tienda</a></li>
             </ul>
         </li>
         <li>

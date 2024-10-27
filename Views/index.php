@@ -1,81 +1,71 @@
+<?php
+session_start();
+require_once '../Data/UsuarioODB.php';
+require_once '../Model/Usuario.php';
+
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $usuario = $_POST['usuario'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    // Validación en PHP para restringir caracteres especiales
+    if (!preg_match('/^[a-zA-Z0-9]*$/', $usuario) || !preg_match('/^[a-zA-Z0-9]*$/', $password)) {
+        $error = "Usuario o contraseña contienen caracteres no permitidos.";
+    } else {
+        $usuarioODB = new UsuarioODB();
+        $usuarioAutenticado = $usuarioODB->login($usuario, $password);
+
+        if ($usuarioAutenticado) {
+            $_SESSION['usuario_id'] = $usuarioAutenticado->getidUsuario();
+            $_SESSION['usuario_nombre'] = $usuarioAutenticado->getCorreo();
+            $_SESSION['rol'] = $usuarioAutenticado->getIdRol();
+            header("Location: indexAdmon.php");
+            exit();
+        } else {
+            $error = "Usuario o contraseña incorrectos.";
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Inicio - T Consulting</title>
-    <link rel="stylesheet" href="../Styles/home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="../Styles/login.css">
+    <script>
+        function validarSinCaracteresEspeciales(input) {
+            const regex = /^[a-zA-Z0-9]*$/;
+            if (!regex.test(input.value)) {
+                input.setCustomValidity("No se permiten caracteres especiales.");
+            } else {
+                input.setCustomValidity("");
+            }
+        }
+    </script>
 </head>
 <body>
+<div class="login-container">
+    <h2>Iniciar Sesión</h2>
 
-<header>
-    <h1>Bienvenido a T Consulting S.A</h1>
-</header>
+    <?php if (!empty($error)): ?>
+        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+    <?php endif; ?>
 
-<nav>
-    <ul>
-        <li>
-            <a href="#">RRHH</a>
-            <ul>
-                <li><a href="v.empleados.php">Empleados</a></li>
-                <li><a href="v.usuarios.php">Usuarios</a></li>
-                <li><a href="v.Expediente.php">Expedientes</a></li>
-                <li><a href="v.ausencias.php">Permisos</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Nómina</a>
-            <ul>
-                <li><a href="#">Pagos</a></li>
-                <li><a href="#">Deducciones</a></li>
-                <li><a href="#">Bonificaciones</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Contabilidad</a>
-            <ul>
-                <li><a href="v.Poliza.php">Polizas Contables</a></li>
-                <li><a href="v.horasextras.php">Horas Extras</a></li>
-                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
-                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
-                <li><a href="#">Reportes Financieros</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">BANTRAB</a>
-            <ul>
-                <li><a href="v.prestamo.php">Prestamos</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Tienda</a>
-            <ul>
-                <li><a href="v.tienda.php">Registro de Tienda</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Configuración</a>
-            <ul>
-                <li><a href="#">Ajustes Generales</a></li>
-                <li><a href="#">Seguridad</a></li>
-            </ul>
-        </li>
-    </ul>
-</nav>
-
-<main>
-    <h2>Políticas de la Empresa</h2>
-    <p>
-        En esta sección se detallan las políticas y normativas de T Consulting. Nuestro objetivo es
-        garantizar que cada empleado y área de la empresa cuente con un entorno estructurado y alineado a las mejores
-        prácticas. Aquí encontrarás información sobre procedimientos, códigos de conducta, y mucho más.
-    </p>
-</main>
-
-<footer>
-    <p>&copy; 2024 T Consulting S.A. Todos los derechos reservados.</p>
-</footer>
-
+    <form action="" method="POST">
+        <div class="form-group">
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" name="usuario" required pattern="[a-zA-Z0-9]*" oninput="validarSinCaracteresEspeciales(this)">
+        </div>
+        <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required pattern="[a-zA-Z0-9]*" oninput="validarSinCaracteresEspeciales(this)">
+        </div>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+</div>
 </body>
 </html>

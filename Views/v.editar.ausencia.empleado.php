@@ -21,19 +21,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $motivo = $_POST['Motivo'];
     $descripcion = $_POST['Descripcion'];
     $estado = empty($_POST['Estado']) ? null : $_POST['Estado'];
-    $cuentaSalario = isset($_POST['Cuenta_Salario']) ? 1 : null;
-    $descuento = empty($_POST['Descuento']) ? null : $_POST['Descuento'];
+    $cuentaSalario = $_POST['Cuenta_Salario'];
 
-    $result = $ausenciaODB->update($idAusencia, $idEmpleado, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento);
+    // Obtener el salario base del empleado seleccionado
+    $empleado = null;
+    foreach ($empleados as $emp) {
+        if ($emp->getIdEmpleado() == $idEmpleado) {
+            $empleado = $emp;
+            break;
+        }
+    }
 
-    if ($result) {
-        header("Location: v.ausencias.php?action=updated");
-        exit();
+    if ($empleado) {
+        // Inicializar el descuento
+        $descuento = 0;
+
+        // Solo calcular el descuento si se selecciona "Sí" (Cuenta_Salario == 1)
+        if ($cuentaSalario == '1') {
+            $salarioBase = $empleado->getSalarioBase();  // Obtener salario base
+
+            // Calcular los días del mes de la fecha de inicio
+            $diasDelMes = date('t', strtotime($fechaInicio));  // Número de días del mes
+
+            // Calcular el salario diario
+            $salarioDiario = $salarioBase / $diasDelMes;
+
+            // Calcular los días de la ausencia
+            $fechaInicioObj = new DateTime($fechaInicio);
+            $fechaFinObj = new DateTime($fechaFin);
+            $diasAusencia = $fechaFinObj->diff($fechaInicioObj)->days + 1;  // Número de días de ausencia
+
+            // Calcular el descuento
+            $descuento = $salarioDiario * $diasAusencia;
+        }
+
+        // Ahora puedes utilizar el valor del descuento en el proceso de actualización
+        $result = $ausenciaODB->update($idAusencia, $idEmpleado, $fechaSolicitud, $fechaInicio, $fechaFin, $motivo, $descripcion, $estado, $cuentaSalario, $descuento, $NombreCompleto = null);
+
+        if ($result) {
+            header("Location: v.ausencias.php?action=updated");
+            exit();
+        } else {
+            header("Location: v.ausencias.php?action=error");
+            exit();
+        }
     } else {
-        header("Location: v.ausencias.php?action=error");
-        exit();
+        // Manejar el caso donde no se encontró el empleado
+        echo "Empleado no encontrado.";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -60,10 +97,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             var fechaInicio = dayjs(document.getElementById('fecha_inicio').value);
             var fechaActual = dayjs();
 
+            // Verificar si la fecha de inicio es anterior a la fecha actual
+            if (fechaInicio.isBefore(fechaActual, 'day')) {
+                document.getElementById('fecha_inicio').setCustomValidity("La fecha de inicio no puede ser anterior a la fecha actual.");
+                return false;
+            }
+
             // Calcular la diferencia en meses
             var diferenciaMeses = fechaInicio.diff(fechaActual, 'month', true); // true para obtener valores decimales
 
-            if (diferenciaMeses < 0 || diferenciaMeses > 3) {
+            if (diferenciaMeses > 3) {
                 document.getElementById('fecha_inicio').setCustomValidity("La fecha de inicio debe ser dentro de los próximos 3 meses.");
                 return false;
             } else {
@@ -72,15 +115,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-
         function validarFechaFin() {
             var fechaInicio = dayjs(document.getElementById('fecha_inicio').value);
             var fechaFin = dayjs(document.getElementById('fecha_fin').value);
+            var motivo = document.getElementById('motivo').value;
 
+            // Definir los límites de días según el motivo
+            var limitesDias = {
+                "Enfermedad": 10,
+                "Cita Medica": 1,
+                "Vacaciones": 15,
+                "Dia Personal": 5,
+                "Accidente": 30,
+                "Permiso Familiar": 7,
+                "Otro": 5
+            };
+
+            // Obtener el límite de días correspondiente al motivo seleccionado
+            var limiteDias = limitesDias[motivo] || 15; // Por defecto, 15 días si no hay motivo válido
+
+            // Verificar si la fecha de fin es anterior a la fecha de inicio
+            if (fechaFin.isBefore(fechaInicio, 'day')) {
+                document.getElementById('fecha_fin').setCustomValidity("La fecha de fin no puede ser anterior a la fecha de inicio.");
+                return false;
+            }
+
+            // Calcular la diferencia en días
             var diferenciaDias = fechaFin.diff(fechaInicio, 'day');
 
-            if (diferenciaDias < 0 || diferenciaDias > 15) {
-                document.getElementById('fecha_fin').setCustomValidity("El período no puede superar los 15 días.");
+            if (diferenciaDias > limiteDias) {
+                document.getElementById('fecha_fin').setCustomValidity("El período no puede superar los " + limiteDias + " días para el motivo seleccionado.");
                 return false;
             } else {
                 document.getElementById('fecha_fin').setCustomValidity(""); // Restablecer si es válido
@@ -129,7 +193,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group">
                 <label for="Motivo">Motivo:</label>
-                <input type="text" id="motivo" name="Motivo" value="<?php echo htmlspecialchars($ausencia->getMotivo()); ?>" required>
+                <select id="motivo" name="Motivo" required>
+                    <option value="Enfermedad" <?php echo $ausencia->getMotivo() === 'Enfermedad' ? 'selected' : ''; ?>>Enfermedad</option>
+                    <option value="Cita Medica" <?php echo $ausencia->getMotivo() === 'Cita Medica' ? 'selected' : ''; ?>>Cita Médica</option>
+                    <option value="Vacaciones" <?php echo $ausencia->getMotivo() === 'Vacaciones' ? 'selected' : ''; ?>>Vacaciones</option>
+                    <option value="Dia Personal" <?php echo $ausencia->getMotivo() === 'Dia Personal' ? 'selected' : ''; ?>>Día Personal</option>
+                    <option value="Accidente" <?php echo $ausencia->getMotivo() === 'Accidente' ? 'selected' : ''; ?>>Accidente</option>
+                    <option value="Permiso Familiar" <?php echo $ausencia->getMotivo() === 'Permiso Familiar' ? 'selected' : ''; ?>>Permiso Familiar</option>
+                    <option value="Otro" <?php echo $ausencia->getMotivo() === 'Otro' ? 'selected' : ''; ?>>Otro (Puede colocar el motivo en la descripción.)</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -139,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label for="Estado">Estado:</label>
                 <select id="estado" name="Estado">
-                    <option value="">Seleccionar...</option> <!-- Opción vacía -->
+                    <option value="">Seleccionar...</option>
                     <option value="Aprobado" <?php echo $ausencia->getEstado() === 'Aprobado' ? 'selected' : ''; ?>>Aprobado</option>
                     <option value="Pendiente" <?php echo $ausencia->getEstado() === 'Pendiente' ? 'selected' : ''; ?>>Pendiente</option>
                     <option value="Rechazado" <?php echo $ausencia->getEstado() === 'Rechazado' ? 'selected' : ''; ?>>Rechazado</option>
@@ -147,14 +219,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div class="form-group">
-                <label for="Cuenta_Salario">Cuenta Salario:</label>
-                <input type="checkbox" id="cuenta_salario" name="Cuenta_Salario" value="1" <?php echo $ausencia->getCuentaSalario() ? 'checked' : ''; ?>>
-                <!-- Si el checkbox no está marcado, no enviará ningún valor -->
-            </div>
-
-            <div class="form-group">
-                <label for="Descuento">Descuento:</label>
-                <input type="number" id="descuento" name="Descuento" value="<?php echo htmlspecialchars($ausencia->getDescuento()); ?>" step="0.01" placeholder="Opcional">
+                <label for="Cuenta_Salario">¿Se realizará descuento de salario al empleado?:</label>
+                <div>
+                    <label>
+                        <input type="radio" id="cuenta_salario_si" name="Cuenta_Salario" value="1"
+                            <?php echo $ausencia->getCuentaSalario() ? 'checked' : ''; ?>>
+                        Sí
+                    </label>
+                    <label>
+                        <input type="radio" id="cuenta_salario_no" name="Cuenta_Salario" value="0"
+                            <?php echo !$ausencia->getCuentaSalario() ? 'checked' : ''; ?>>
+                        No
+                    </label>
+                </div>
             </div>
 
             <div class="form-group form-buttons">

@@ -49,9 +49,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
 <nav>
     <ul>
         <li>
-            <a href="index.php">Inicio</a>
-        </li>
-        <li>
             <a href="#">RRHH</a>
             <ul>
                 <li><a href="v.empleados.php">Empleados</a></li>
@@ -85,6 +82,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
             </ul>
         </li>
         <li>
+            <a href="#">Tienda</a>
+            <ul>
+                <li><a href="v.tienda.php">Registro de Tienda</a></li>
+            </ul>
+        </li>
+        <li>
             <a href="#">Configuración</a>
             <ul>
                 <li><a href="#">Ajustes Generales</a></li>
@@ -102,7 +105,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
         <table>
             <thead>
             <tr>
-                <th>ID Solicitud</th>
                 <th class="text-wrap">Fecha Solicitud</>
                 <th class="text-wrap">Fecha Inicio</>
                 <th class="text-wrap">Fecha Fin</>
@@ -118,7 +120,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
             <tbody>
             <?php foreach ($ausencias as $ausencia) : ?>
                 <tr>
-                    <td><?php echo htmlspecialchars($ausencia->getIdSolicitud()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getFechaSolicitud()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getFechaInicio()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getFechaFin()); ?></td>
@@ -126,7 +127,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
                     <td class="text-wrap"><?php echo htmlspecialchars($ausencia->getDescripcion()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getEstado()); ?></td>
                     <td><?php echo htmlspecialchars($ausencia->getCuentaSalario() ? 'Sí' : 'No'); ?></td>
-                    <td><?php echo htmlspecialchars($ausencia->getDescuento()); ?></td>
+                    <td><?php echo number_format($ausencia->getDescuento(), 2);?></td>
                     <td <td class="text-wrap"><?php echo htmlspecialchars($ausencia->getNombreCompleto()); ?></td>
                     <td>
                         <div class="botones-acciones">

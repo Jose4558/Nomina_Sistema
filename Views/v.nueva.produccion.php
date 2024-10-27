@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h1>Registrar Producción</h1>
     <nav>
         <ul>
-            <li><a href="index.php">Inicio</a></li>
+            <li><a href="indexAdmon.php">Inicio</a></li>
             <li><a href="v.produccion.php">Producción</a></li>
         </ul>
     </nav>

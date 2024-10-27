@@ -12,7 +12,7 @@ class UsuarioODB {
 
     public function getAll() {
         $query = "SELECT
-                    U.ID_Usuario,  U.Correo, U.ID_Rol, U.Estado, R.Nombre AS Rol
+                    U.ID_Usuario, U.Correo, U.ID_Rol, U.Estado, R.Nombre AS Rol
                 FROM Usuario U INNER JOIN Rol R ON U.ID_Rol = R.ID_Rol";
         $result = $this->connection->query($query);
         $usuarios = [];
@@ -25,7 +25,7 @@ class UsuarioODB {
 
     public function getById($id) {
         $query = "SELECT
-                    U.ID_Usuario,  U.Correo, U.Contrasena, U.ID_Rol, U.Estado, R.Nombre AS Rol
+                    U.ID_Usuario, U.Correo, U.Contrasena, U.ID_Rol, U.Estado, R.Nombre AS Rol
                 FROM Usuario U INNER JOIN Rol R ON U.ID_Rol = R.ID_Rol
                 WHERE U.ID_Usuario = ?";
         $stmt = $this->connection->prepare($query);
@@ -62,4 +62,30 @@ class UsuarioODB {
         $stmt->bindParam(1, $id);
         $stmt->execute();
     }
+
+    // Método de Login para autenticar el usuario
+    public function login($usuario, $password) {
+        $query = "EXEC ValidarUsuario :usuario, :password";
+        $stmt = $this->connection->prepare($query);
+        $stmt->bindParam(':usuario', $usuario);
+        $stmt->bindParam(':password', $password);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            // Si se encuentra una coincidencia, se devuelve el objeto Usuario
+            return new Usuario(
+                $row['ID_Usuario'],
+                $row['Usuario'],
+                null, // No se devuelve la contraseña por seguridad
+                $row['Empresa'],
+                $row['ID_Rol'],
+                $row['ID_Empleado']
+            );
+        } else {
+            // Si no hay coincidencia, devuelve null
+            return null;
+        }
+    }
 }
+?>

@@ -17,10 +17,10 @@ class SQLSRVConnector
         $this->loadEnv(__DIR__ . '/../.env');
 
         // Obtener las variables de entorno
-        $this->host = getenv('DB_HOST');
-        $this->database = getenv('DB_NAME');
-        $this->username = getenv('DB_USERNAME');  // Asigna el valor si usas autenticación
-        $this->password = getenv('DB_PASSWORD');  // Asigna el valor si usas autenticación
+        $this->host = 'den1.mssql8.gear.host';
+        $this->database = 'tconsulting';
+        $this->username = 'tconsulting';  // Asigna el valor si usas autenticación
+        $this->password = 'Ep0Wc6-2r1~1';  // Asigna el valor si usas autenticación
 
         try {
             // Configura la cadena de conexión DSN

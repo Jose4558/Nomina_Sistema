@@ -22,6 +22,7 @@ $compras = $tiendaODB->getAllTiendas();
 <body>
 <header>
     <h1>Gestión de Compras y Pagos</h1>
+    <button onclick="cerrarSesion()" class="btn btn-eliminar">Cerrar Sesión</button>
 </header>
 <nav>
     <ul>
@@ -29,7 +30,6 @@ $compras = $tiendaODB->getAllTiendas();
             <a href="#">RRHH</a>
             <ul>
                 <li><a href="v.empleados.php">Empleados</a></li>
-                <li><a href="v.usuarios.php">Usuarios</a></li>
                 <li><a href="v.Expediente.php">Expedientes</a></li>
                 <li><a href="v.ausencias.php">Permisos</a></li>
             </ul>
@@ -37,9 +37,7 @@ $compras = $tiendaODB->getAllTiendas();
         <li>
             <a href="#">Nómina</a>
             <ul>
-                <li><a href="#">Pagos</a></li>
-                <li><a href="#">Deducciones</a></li>
-                <li><a href="#">Bonificaciones</a></li>
+                <li><a href="v.nomina.php">Pagos</a></li>
             </ul>
         </li>
         <li>
@@ -49,7 +47,6 @@ $compras = $tiendaODB->getAllTiendas();
                 <li><a href="v.horasextras.php">Horas Extras</a></li>
                 <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
                 <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
-                <li><a href="#">Reportes Financieros</a></li>
             </ul>
         </li>
         <li>
@@ -62,13 +59,6 @@ $compras = $tiendaODB->getAllTiendas();
             <a href="#">Tienda</a>
             <ul>
                 <li><a href="v.tienda.php">Registro de Tienda</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Configuración</a>
-            <ul>
-                <li><a href="#">Ajustes Generales</a></li>
-                <li><a href="#">Seguridad</a></li>
             </ul>
         </li>
     </ul>
@@ -113,9 +103,10 @@ $compras = $tiendaODB->getAllTiendas();
 </footer>
 
 <script>
-
-
-
+    function cerrarSesion() {
+        // Redirige al usuario a la página index.php
+        window.location.href = '../index.html';
+    }
 </script>
 
 </body>

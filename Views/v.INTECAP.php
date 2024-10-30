@@ -1,18 +1,22 @@
+<?php
+require_once '../Model/Intecap.php';
+require_once '../Data/IntecapODB.php';
+
+$intecapODB = new IntecapODB();
+$intecapList = $intecapODB->getAll();
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Inicio - T Consulting</title>
-    <link rel="stylesheet" href="../Styles/home.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>Lista de INTECAP</title>
+    <link rel="stylesheet" href="../Styles/styles.css">
 </head>
 <body>
-
 <header>
-    <h1>Bienvenido a T Consulting S.A</h1>
+    <h1>Gestión de INTECAP</h1>
 </header>
-
 <nav>
     <ul>
         <li>
@@ -52,19 +56,34 @@
         </li>
     </ul>
 </nav>
-
 <main>
-    <h2>Políticas de la Empresa</h2>
-    <p>
-        En esta sección se detallan las políticas y normativas de T Consulting. Nuestro objetivo es
-        garantizar que cada empleado y área de la empresa cuente con un entorno estructurado y alineado a las mejores
-        prácticas. Aquí encontrarás información sobre procedimientos, códigos de conducta, y mucho más.
-    </p>
+    <section class="INTECAP">
+        <h2>Registros de INTECAP</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Año</th>
+                <th>Monto Patronal</th>
+                <th>Nombre del Empleado</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($intecapList as $intecap) : ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($intecap->getMes()); ?></td>
+                    <td><?php echo htmlspecialchars($intecap->getAnio()); ?></td>
+                    <td><?php echo number_format($intecap->getMontoPatronal(), 2); ?></td>
+                    <td><?php echo htmlspecialchars($intecap->getNombreCompleto()); ?></td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+    </section>
 </main>
 
 <footer>
-    <p>&copy; 2024 T Consulting S.A. Todos los derechos reservados.</p>
+    <p>© 2024 TConsulting. Todos los derechos reservados.</p>
 </footer>
-
 </body>
 </html>

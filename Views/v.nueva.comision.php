@@ -7,6 +7,7 @@ $empleadoODB = new EmpleadoODB();
 
 // Obtener la lista de empleados
 $empleados = $empleadoODB->getAll();
+$comision = null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mes = intval($_POST['Mes']);
@@ -15,24 +16,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idEmpleado = intval($_POST['ID_Empleado']);
     $descripcion = $_POST['Descripcion'];
 
-    // Calcular el porcentaje de comisión según el monto de ventas
-    if ($montoVentas >= 0 && $montoVentas <= 100000) {
-        $porcentaje = 0.0;
-    } elseif ($montoVentas >= 100001 && $montoVentas <= 200000) {
-        $porcentaje = 2.5;
-    } elseif ($montoVentas >= 200001 && $montoVentas <= 400000) {
-        $porcentaje = 3.5;
-    } else {
-        $porcentaje = 4.5;
-    }
+    // Inicializar la comisión
+    $comision = 0;
+    $porcentaje = 0;
 
-    // Calcular la comisión
-    $comision = ($montoVentas * $porcentaje) / 100;
+// Calcular la comisión según los tramos de ventas
+    if ($montoVentas > 0) {
+        if ($montoVentas > 400000) {
+            $comision += ($montoVentas - 400000) * 0.045; // 4.5% para la parte superior
+            $montoVentas = 400000;
+            $porcentaje = 4.5;// Ajustar el monto para el siguiente cálculo
+        }
+        if ($montoVentas > 200000) {
+            $comision += ($montoVentas - 200000) * 0.035; // 3.5% para la parte entre 200001 y 400000
+            $montoVentas = 200000;
+            $porcentaje = 3.5;// Ajustar el monto para el siguiente cálculo
+        }
+        if ($montoVentas > 100000) {
+            $comision += ($montoVentas - 100000) * 0.025; // 2.5% para la parte entre 100001 y 200000
+            $montoVentas = 100000;
+            $porcentaje = 2.5;// Ajustar el monto para el siguiente cálculo
+        }
+        // Para la parte de ventas hasta 100000, la comisión es 0%
+    }
+// La comisión final se calcula y se puede imprimir o usar
+    echo "La comisión es: " . $comision;
+
 
     // Insertar la comisión y póliza
     $result = $comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion); // Cambia '0' por la cuenta contable si es necesario.
 
-    if ($comisionesODB->insertarComisionYPoliza($mes, $anio, $montoVentas, $porcentaje, $comision, $idEmpleado, $descripcion)) {
+    if ($result) {
         header("Location: v.comisiones.php?action=created");
         exit(); // Termina el script después de la redirección
     } else {

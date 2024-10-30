@@ -47,6 +47,7 @@ if ($idPoliza) {
 <body>
 <header>
     <h1>Gestión de Pólizas Contables</h1>
+    <button onclick="cerrarSesion()" class="btn btn-eliminar">Cerrar Sesión</button>
 </header>
 <nav>
     <ul>
@@ -54,7 +55,6 @@ if ($idPoliza) {
             <a href="#">RRHH</a>
             <ul>
                 <li><a href="v.empleados.php">Empleados</a></li>
-                <li><a href="v.usuarios.php">Usuarios</a></li>
                 <li><a href="v.Expediente.php">Expedientes</a></li>
                 <li><a href="v.ausencias.php">Permisos</a></li>
             </ul>
@@ -62,9 +62,7 @@ if ($idPoliza) {
         <li>
             <a href="#">Nómina</a>
             <ul>
-                <li><a href="#">Pagos</a></li>
-                <li><a href="#">Deducciones</a></li>
-                <li><a href="#">Bonificaciones</a></li>
+                <li><a href="v.nomina.php">Pagos</a></li>
             </ul>
         </li>
         <li>
@@ -74,7 +72,6 @@ if ($idPoliza) {
                 <li><a href="v.horasextras.php">Horas Extras</a></li>
                 <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
                 <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
-                <li><a href="#">Reportes Financieros</a></li>
             </ul>
         </li>
         <li>
@@ -87,13 +84,6 @@ if ($idPoliza) {
             <a href="#">Tienda</a>
             <ul>
                 <li><a href="v.tienda.php">Registro de Tienda</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Configuración</a>
-            <ul>
-                <li><a href="#">Ajustes Generales</a></li>
-                <li><a href="#">Seguridad</a></li>
             </ul>
         </li>
     </ul>
@@ -143,7 +133,10 @@ if ($idPoliza) {
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-
+    function cerrarSesion() {
+        // Redirige al usuario a la página index.php
+        window.location.href = '../index.html';
+    }
 </script>
 </body>
 

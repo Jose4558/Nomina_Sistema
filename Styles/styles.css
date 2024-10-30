@@ -310,6 +310,22 @@ footer p {
     border-radius: 5px;
     cursor: pointer;
 }
+/* Estilos para el botón de cerrar sesión */
+.btn-cerrar {
+    background-color: #ff5555; /* Color de fondo del botón */
+    color: #ffffff; /* Color del texto */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 10px 15px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de la fuente */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    transition: background-color 0.3s; /* Transición suave para el cambio de color */
+}
+
+.btn-cerrar:hover {
+    background-color: #ff3333; /* Color de fondo al pasar el mouse */
+}
+
 
 .btn-nuevo-pago:hover {
     background-color: #45a049;

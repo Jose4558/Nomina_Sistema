@@ -35,6 +35,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descripcion = $_POST['Descripcion'];
     $cuentaContable = $_POST['Cuenta_Contable'];
 
+    $porcentaje = 0;
+
+// Calcular la comisión según los tramos de ventas
+    if ($montoVentas > 0) {
+        if ($montoVentas > 400000) {
+            $porcentaje = 4.5;
+        }
+        if ($montoVentas > 200000) {
+            $porcentaje = 3.5;
+        }
+        if ($montoVentas > 100000) {
+            $porcentaje = 2.5;
+        }
+        // Para la parte de ventas hasta 100000, la comisión es 0%
+    }
     // Llamar al método de actualización
     $result = $comisionesODB->update($idComision, $mes, $anio, $montoVentas, $porcentaje, $idEmpleado, $descripcion, $cuentaContable);
 

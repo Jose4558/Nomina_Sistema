@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'Data/UsuarioODB.php';
-require_once 'Model/Usuario.php';
+require_once '../Data/UsuarioODB.php';
+require_once '../Model/Usuario.php';
 
 $error = '';
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Principal</title>
-    <link rel="stylesheet" href="Styles/login.css">
+    <link rel="stylesheet" href="../Styles/login.css">
     <script>
         // Función para mostrar u ocultar el aside de inicio de sesión
         function toggleLoginAside() {
@@ -72,6 +72,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </aside>
 </body>
 </html>
-
-
-

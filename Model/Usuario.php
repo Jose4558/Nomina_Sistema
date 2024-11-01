@@ -7,8 +7,11 @@ class Usuario {
     private $empresa;
     private $idEmpleado;
     private $idRol;
+    private $NombreCompleto;
 
-    public function __construct($idUsuario = null, $usuario = null, $correo = null, $password = null, $empresa = null, $idEmpleado = null, $idRol = null) {
+    private $Rol;
+
+    public function __construct($idUsuario = null, $usuario = null, $correo = null, $password = null, $empresa = null, $idEmpleado = null, $idRol = null, $NombreCompleto = null, $Rol = null) {
         $this->idUsuario = $idUsuario; // Puede ser null para nuevas inserciones
         $this->usuario = $usuario;
         $this->correo = $correo;
@@ -16,11 +19,22 @@ class Usuario {
         $this->empresa = $empresa;
         $this->idEmpleado = $idEmpleado; // ID de la relación con el empleado
         $this->idRol = $idRol; // ID de la relación con el rol
+        $this->NombreCompleto = $NombreCompleto;
+        $this->Rol = $Rol;
     }
 
     // Getters
     public function getIdUsuario() {
         return $this->idUsuario;
+    }
+
+    public function getRol() {
+        return $this->Rol;
+    }
+
+
+    public function getNombreCompleto() {
+        return $this->NombreCompleto;
     }
 
     public function getUsuario() {

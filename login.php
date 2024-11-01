@@ -20,7 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['usuario_id'] = $usuarioAutenticado->getidUsuario();
             $_SESSION['usuario_nombre'] = $usuarioAutenticado->getCorreo();
             $_SESSION['rol'] = $usuarioAutenticado->getIdRol();
-            header("Location: Views/indexAdmon.php");
+            switch ($_SESSION['rol']) {
+                case '1': // Si es administrador
+                    header("Location: Views/indexAdmon.php");
+                    break;
+                case '5': // Si es otro rol, puedes definir más casos
+                    header("Location: Views/indexRRHH.php");
+                    break;
+                default:
+                    header("Location: Views/indexDefault.php"); // Página predeterminada
+                    break;
+            }
             exit();
         } else {
             $error = "Usuario o contraseña incorrectos.";

@@ -49,42 +49,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
 </header>
 <nav>
     <ul>
-        <li>
-            <a href="#">RRHH</a>
-            <ul>
-                <li><a href="v.empleados.php">Empleados</a></li>
-                <li><a href="v.Expediente.php">Expedientes</a></li>
-                <li><a href="v.ausencias.php">Permisos</a></li>
-                <li><a href="v.usuarios.php">Usuarios</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Nómina</a>
-            <ul>
-                <li><a href="v.nomina.php">Pagos</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Contabilidad</a>
-            <ul>
-                <li><a href="v.Poliza.php">Polizas Contables</a></li>
-                <li><a href="v.horasextras.php">Horas Extras</a></li>
-                <li><a href="v.comisiones.php">Comisiones sobre ventas</a></li>
-                <li><a href="v.produccion.php">Bonificaciones por producción</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">BANTRAB</a>
-            <ul>
-                <li><a href="v.prestamo.php">Prestamos</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href="#">Tienda</a>
-            <ul>
-                <li><a href="v.tienda.php">Registro de Tienda</a></li>
-            </ul>
-        </li>
+        <li><a href="v.usuariosRRHH.php">Usuarios</a></li>
+        <li><a href="v.empleadosRRHH.php">Empleados</a></li>
+        <li><a href="v.ExpedienteRRHH.php">Expedientes</a></li>
+        <li><a href="v.ausenciasRRHH.php">Permisos</a></li>
     </ul>
 </nav>
 <main>
@@ -173,5 +141,3 @@ if (isset($_GET['action']) && $_GET['action'] === 'deleted') {
 </script>
 
 </body>
-
-</html>

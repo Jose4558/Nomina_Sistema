@@ -21,6 +21,7 @@
                 <li><a href="v.empleados.php">Empleados</a></li>
                 <li><a href="v.Expediente.php">Expedientes</a></li>
                 <li><a href="v.ausencias.php">Permisos</a></li>
+                <li><a href="v.usuarios.php">Usuarios</a></li>
             </ul>
         </li>
         <li>

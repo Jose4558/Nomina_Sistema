@@ -1,7 +1,7 @@
 <?php
 
 require_once 'SQLSRVConnector.php';
-require_once('C:/xampp/htdocs/Nomina_Sistemas/Model/Usuario.php');
+require_once '../Model/Usuario.php';
 
 class UsuarioODB {
     private $connection;

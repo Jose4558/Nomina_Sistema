@@ -2,6 +2,8 @@
 session_start();
 require_once 'Data/UsuarioODB.php';
 require_once 'Model/Usuario.php';
+require_once 'Data/SQLSRVConnector.php';
+
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = $_POST['usuario'] ?? '';

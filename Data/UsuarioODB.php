@@ -108,12 +108,8 @@ class UsuarioODB {
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($row) {
-            // Imprime el hash almacenado
-            $hashAlmacenado = $row['Password']; // Asegúrate de que esta columna contiene el hash de la contraseña
-            echo "Hash almacenado: " . $hashAlmacenado; // Asegúrate de ver el hash correcto
-
-            // Verifica la contraseña en texto claro
-            if ($password === $hashAlmacenado) { // Cambia la verificación a comparación simple
+            // Comparación directa de la contraseña sin encriptación
+            if ($password === $row['Password']) { // Reemplaza 'Password' con el nombre real del campo de contraseña en la base de datos
                 return new Usuario(
                     $row['ID_Usuario'],
                     $row['Usuario'],
@@ -124,14 +120,10 @@ class UsuarioODB {
                     $row['ID_Empleado']
                 );
             } else {
-                echo "La contraseña es incorrecta."; // Mensaje adicional para depuración
+                return null; // Contraseña incorrecta
             }
-        } else {
-            echo "No se encontró el usuario."; // Mensaje adicional si no se encontró el usuario
         }
-
-        return null; // Si la contraseña es incorrecta o el usuario no existe
+        return null; // Usuario no encontrado
     }
-
 }
 ?>

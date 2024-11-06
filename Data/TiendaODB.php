@@ -21,6 +21,7 @@ class TiendaODB {
             $tienda = new Tienda(
                 $row['ID_Compra'],
                 $row['Cuotas'],
+                $row['Monto'],
                 $row['Max_Credit'],
                 $row['Saldo_Pendiente'],
                 $row['Credito_Disponible'],
@@ -148,6 +149,33 @@ class TiendaODB {
             // Manejo de errores
             echo "Error: " . $e->getMessage();
             return false;
+        }
+    }
+
+    public function insertarTienda($cuotas, $maxCredit, $saldoPendiente, $creditoDisponible, $idEmpleado) {
+        try {
+            // Definir el query para el procedimiento almacenado
+            $query = "EXEC InsertarTienda :cuotas, :maxCredit, :saldoPendiente, :creditoDisponible, :idEmpleado";
+
+            // Preparar la declaración
+            $stmt = $this->connection->prepare($query);
+
+            // Vincular los parámetros
+            $stmt->bindParam(':cuotas', $cuotas, PDO::PARAM_INT);
+            $stmt->bindParam(':maxCredit', $maxCredit, PDO::PARAM_STR); // FLOAT se puede manejar como STR en PDO
+            $stmt->bindParam(':saldoPendiente', $saldoPendiente, PDO::PARAM_STR);
+            $stmt->bindParam(':creditoDisponible', $creditoDisponible, PDO::PARAM_STR);
+            $stmt->bindParam(':idEmpleado', $idEmpleado, PDO::PARAM_INT);
+
+            // Ejecutar el procedimiento
+            $stmt->execute();
+
+            return true; // Indica éxito
+
+        } catch (PDOException $e) {
+            // Manejar el error en caso de fallo en la transacción
+            error_log("Error en la inserción de Tienda: " . $e->getMessage());
+            return false; // Indica que falló la operación
         }
     }
 

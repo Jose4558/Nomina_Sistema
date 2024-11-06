@@ -116,8 +116,8 @@ class UsuarioODB {
                     $row['Correo'],
                     null, // No se devuelve la contraseña por seguridad
                     $row['Empresa'],
-                    $row['ID_Rol'],
-                    $row['ID_Empleado']
+                    $row['ID_Empleado'],
+                    $row['ID_Rol']
                 );
             } else {
                 return null; // Contraseña incorrecta

@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $usuarioAutenticado = $usuarioODB->login($usuario, $password);
         if ($usuarioAutenticado) {
             $_SESSION['usuario_id'] = $usuarioAutenticado->getidUsuario();
-            $_SESSION['usuario_nombre'] = $usuarioAutenticado->getCorreo();
+            $_SESSION['usuario_nombre'] = $usuarioAutenticado->getUsuario();
             $_SESSION['rol'] = $usuarioAutenticado->getIdRol();
             header("Location: Views/indexAdmon.php");
             exit();

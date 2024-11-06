@@ -3,6 +3,7 @@ class Tienda
 {
     private $ID_Compra;
     private $Cuotas;
+    private $Monto;
     private $Max_Credit;
     private $Saldo_Pendiente;
     private $Credito_Disponible;
@@ -17,6 +18,7 @@ class Tienda
     public function __construct(
         $ID_Compra,
         $Cuotas = null,
+        $Monto = null,
         $Max_Credit = null,
         $Saldo_Pendiente,
         $Credito_Disponible = null,
@@ -30,6 +32,7 @@ class Tienda
     ) {
         $this->ID_Compra = $ID_Compra;
         $this->Cuotas = $Cuotas;
+        $this->Monto = $Monto;
         $this->Max_Credit = $Max_Credit;
         $this->Saldo_Pendiente = $Saldo_Pendiente;
         $this->Credito_Disponible = $Credito_Disponible;
@@ -50,6 +53,11 @@ class Tienda
     public function getCompra()
     {
         return $this->Compra;
+    }
+
+    public function getMonto()
+    {
+        return $this->Monto;
     }
 
     public function getPago()
@@ -111,6 +119,12 @@ class Tienda
     {
         return $this->Pago = $Pago;
     }
+
+    public function setMonto($Monto)
+    {
+        return $this->Monto = $Monto;
+    }
+
 
     public function setCompra($Compra)
     {

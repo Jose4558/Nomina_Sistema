@@ -70,7 +70,6 @@ $compras = $tiendaODB->getAllTiendas();
             <thead>
             <tr>
                 <th  class="text-wrap">Cuotas Máximas</th>
-                <th  class="text-wrap">Monto de Cuotas</th>
                 <th  class="text-wrap">Saldo Pendiente</th>
                 <th  class="text-wrap">Crédito Disponible</th>
                 <th  class="text-wrap">Nombre del Empleado</th>
@@ -82,7 +81,6 @@ $compras = $tiendaODB->getAllTiendas();
             <?php foreach ($compras as $compra) : ?>
                 <tr>
                     <td><?php echo htmlspecialchars($compra->getCuotas()); ?></td>
-                    <td><?php echo number_format($compra->getMonto(), 2); ?></td>
                     <td><?php echo number_format($compra->getSaldoPendiente(), 2); ?></td>
                     <td><?php echo number_format($compra->getCreditoDisponible(), 2); ?></td>
                     <td><?php echo htmlspecialchars($compra->getNombreCompleto()); ?></td>

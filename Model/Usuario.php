@@ -28,15 +28,6 @@ class Usuario {
         return $this->idUsuario;
     }
 
-    public function getRol() {
-        return $this->Rol;
-    }
-
-
-    public function getNombreCompleto() {
-        return $this->NombreCompleto;
-    }
-
     public function getUsuario() {
         return $this->usuario;
     }
@@ -59,6 +50,14 @@ class Usuario {
 
     public function getIdRol() {
         return $this->idRol;
+    }
+
+    public function getNombreCompleto() {
+        return $this->NombreCompleto;
+    }
+
+    public function getRol() {
+        return $this->Rol;
     }
 
     // Setters
@@ -88,6 +87,14 @@ class Usuario {
 
     public function setIdRol($idRol) {
         $this->idRol = $idRol;
+    }
+
+    public function setNombreCompleto($nombreCompleto) {
+        $this->nombreCompleto = $nombreCompleto;
+    }
+
+    public function setRol($rol) {
+        $this->rol = $rol;
     }
 }
 ?>
